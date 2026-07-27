@@ -27,7 +27,7 @@ h2{font-size:16px;font-weight:500;margin:32px 0 12px}
    1. DropdownTrigger 下拉菜单按钮
    node-id=3263-32448
    ============================================================ */
-.dd{display:inline-flex;align-items:stretch;border-radius:var(--r-sm);overflow:hidden;cursor:pointer;height:32px;user-select:none;transition:opacity .2s;margin:0 8px}
+.dd{display:inline-flex;align-items:stretch;border-radius:var(--r-md);overflow:hidden;cursor:pointer;height:32px;user-select:none;transition:opacity .2s;margin:0 8px}
 .dd:first-child{margin-left:0}.dd:last-child{margin-right:0}
 .dd.pri{background:var(--p);color:#fff}
 .dd.pri:hover{background:var(--ph)}
@@ -51,7 +51,7 @@ h2{font-size:16px;font-weight:500;margin:32px 0 12px}
 /* FilterBar — 多 item 有间距，不合并边框 */
 .fb{display:inline-flex;align-items:stretch;gap:8px}
 
-/* 左侧 Label 区 — border 上/下/左，无右边框（右侧开放给 control） */
+/* 左侧 Label 区 — border 上/下/左，无右边框，hover 也响应 */
 .fi-label{
   display:inline-flex;align-items:center;padding:3px 12px;gap:4px;
   border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);border-left:1px solid var(--bd);
@@ -60,7 +60,9 @@ h2{font-size:16px;font-weight:500;margin:32px 0 12px}
   white-space:nowrap;cursor:default;
   max-width:33.333%;
   overflow:hidden;
+  transition:border-color .2s;
 }
+.fi-label:hover{border-color:var(--bdh)}
 .fi-label-text{
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
   max-width:100%;
@@ -122,8 +124,8 @@ h2{font-size:16px;font-weight:500;margin:32px 0 12px}
   transition:background .15s;white-space:nowrap;
 }
 .fi-opt:hover{background:var(--bgf)}
-/* 选中态: bg #f2f3f5, text #00aaa6 */
-.fi-opt.sel{color:var(--p);background:#f2f3f5}
+/* 选中态: 仅文字变色，无背景无描边 */
+.fi-opt.sel{color:var(--p)}
 
 /* 禁用态 */
 .fi.disabled .fi-control,.fi.disabled .fi-label{opacity:.3;pointer-events:none}
@@ -182,7 +184,7 @@ h2{font-size:16px;font-weight:500;margin:32px 0 12px}
   transition:background .15s;
 }
 .sel-opt:hover{background:var(--bgf)}
-.sel-opt.sel{color:var(--p);background:#f2f3f5}
+.sel-opt.sel{color:var(--p)}
 .sel.disabled{opacity:.3;pointer-events:none}
 
 /* ============================================================
