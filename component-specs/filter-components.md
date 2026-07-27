@@ -151,11 +151,11 @@ filter-item
 type FilterControlType = 'select' | 'input' | 'datepicker' | 'inputtag';
 
 interface FilterItemProps {
-  label?: string;            // 左侧标签文字
-  type?: FilterControlType;  // 控件类型，默认 'input'
-  children?: ReactNode;      // 自定义控件（与 type 互斥）
-  isFirst?: boolean;         // 是否第一个，默认 true
-  isLast?: boolean;          // 是否最后一个，默认 false
+  label?: string;
+  type?: FilterControlType;
+  children?: ReactNode;
+  isFirst?: boolean;
+  isLast?: boolean;
   className?: string;
 }
 ```
@@ -251,7 +251,7 @@ select
 |---|---|---|---|---|
 | 边框色 | `#E5E6EB` | `#C9CDD4` | `#00AAA6` | `#E5E6EB` |
 | 背景 | `#FFF` | `#FFF` | `#FFF` | `#FFF` |
-| 文字色 | `#86909C` placheholder / `#1D2129` 已选 | 不变 | 不变 | opacity 30% |
+| 文字色 | `#86909C` placeholder / `#1D2129` 已选 | 不变 | 不变 | opacity 30% |
 | 箭头 | 0° | 0° | 180° | opacity 30% |
 | 外发光 | 无 | 无 | `0 0 0 2px rgba(0,170,166,0.3)` | 无 |
 
@@ -268,12 +268,12 @@ interface SelectOption {
 
 interface SelectProps {
   size?: SelectSize;
-  filled?: boolean;            // 填充背景色
+  filled?: boolean;
   multiple?: boolean;
   disabled?: boolean;
-  placeholder?: string;        // 默认 "Please select"
+  placeholder?: string;
   options?: SelectOption[];
-  value?: string | string[];   // 单选 string，多选 string[]
+  value?: string | string[];
   onChange?: (value: string | string[]) => void;
   className?: string;
 }
@@ -496,39 +496,22 @@ input
 | 背景 | `#FFF` | `#FFF` | `#FFF` | `#F7F8FA` |
 | 文字色 | `#1D2129` | 不变 | 不变 | opacity 30% |
 | placeholder 色 | `#86909C` | 不变 | 不变 | opacity 30% |
-| 外发光 | 无 | 无 | `0 0 0 2px #6B60EC` (30% opacity) | 无 |
-| 前置标签背景 | `#FFF` | — | — | — |
-| 前置标签边框 | `#E5E6EB`, 右border | — | — | — |
+| 外发光 | 无 | 无 | `0 0 0 2px #6B60EC` (30%) | 无 |
 
 ### 5.5 Props API
 
 ```typescript
 type InputSize = 'large' | 'medium' | 'small' | 'mini';
 
-interface InputProps {
+interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size' | 'onChange'> {
   size?: InputSize;
   filled?: boolean;
-  disabled?: boolean;
-  placeholder?: string;
-  value?: string;
-  defaultValue?: string;
-  onChange?: (value: string) => void;
-  /** 前缀图标 ReactNode */
   prefixIcon?: React.ReactNode;
-  /** 后缀图标 ReactNode */
   suffixIcon?: React.ReactNode;
-  /** 前置标签文字（如 "http://"） */
   addonBefore?: string;
-  /** 后置标签文字（如 ".com"） */
   addonAfter?: string;
-  /** 是否显示清除按钮 */
   allowClear?: boolean;
-  /** 最大长度 */
-  maxLength?: number;
-  className?: string;
-  /** 原生 input 属性透传 */
-  onFocus?: () => void;
-  onBlur?: () => void;
+  onChange?: (value: string) => void;
 }
 ```
 
@@ -679,8 +662,8 @@ export const Input: React.FC<InputProps> = ({
 // 基础输入
 <Input placeholder="请输入关键词" value={kw} onChange={setKw} />
 
-// 带前后缀图标
-<Input prefixIcon={<SearchIcon />} suffixIcon={<CloseIcon />} allowClear />
+// 带前缀图标 + 清除
+<Input prefixIcon={<SearchIcon />} allowClear />
 
 // 带前置标签
 <Input addonBefore="http://" addonAfter=".com" placeholder="example" />
@@ -709,59 +692,45 @@ export const Input: React.FC<InputProps> = ({
 ```
 dropdown-trigger（HORIZONTAL, 120×32px FIXED）
 ├── text（文字区，FILL width/height）
-│   └── text/text（HUG，如 "渠道" 或任意 label）
+│   └── text/text（如 "渠道"）
 ├── icon（图标区，32×32px FIXED）
-│   ├── 背景 #00AAA6（主要）/ #FFF（次要）
+│   ├── 背景 #00AAA6 / #FFF
 │   ├── 左边框 1px solid #22BBB3（仅主要类型）
 │   ├── 圆角 右侧 2px
-│   └── icon-wrapper
-│       └── direction/down2（14×14 箭头）
+│   └── icon-wrapper → direction/down2（14×14 箭头）
 ```
 
 ### 6.3 视觉规格
 
 | 属性 | 主要类型（默认） | 次要类型 |
 |---|---|---|
-| 背景色 | `#00AAA6` (rgba: 0, 170, 166) | `#FFFFFF` |
-| 文字色 | `#FFFFFF` (继承背景反转) | `#1D2129` |
+| 背景色 | `#00AAA6` | `#FFFFFF` |
+| 文字色 | `#FFFFFF` | `#1D2129` |
 | 图标区背景 | `#00AAA6` | `#FFFFFF` |
 | 图标区左边框 | `1px solid #22BBB3` | `1px solid #E5E6EB` |
-| 图标区圆角 | 右侧 `2px` | 右侧 `2px` |
 | 文字区圆角 | 左侧 `2px` | 左侧 `2px` |
+| 图标区圆角 | 右侧 `2px` | 右侧 `2px` |
 | 高度 | `32px` | `32px` |
 | 总宽度 | `120px` (FIXED) | `120px` (FIXED) |
 | 文字区 padding | `5px 16px` | `5px 16px` |
-| 图标 | `direction/down2`, 14×14 | `direction/down2`, 14×14 |
+| 图标 | `direction/down2`, 14×14 | 14×14 |
 
-### 6.4 状态
-
-| 属性 | 默认 | 悬停 | 激活（展开） | 禁用 |
-|---|---|---|---|---|
-| 背景色 | `#00AAA6` | 微亮 | `#00AAA6` | 不变 |
-| 边框/阴影 | 无 | 无 | 箭头旋转 180° | opacity 30% |
-| 箭头 | 0° | 0° | 180° | opacity 30% |
-
-### 6.5 Props API
+### 6.4 Props API
 
 ```typescript
 type DropdownVariant = 'primary' | 'secondary';
 
 interface DropdownTriggerProps {
-  /** 按钮类型 */
   variant?: DropdownVariant;
-  /** 按钮文字 */
   label?: string;
-  /** 是否禁用 */
   disabled?: boolean;
-  /** 下拉是否展开（受控） */
   open?: boolean;
-  /** 点击回调 */
   onClick?: () => void;
   className?: string;
 }
 ```
 
-### 6.6 React 实现
+### 6.5 React 实现
 
 ```tsx
 import React, { useState } from 'react';
@@ -787,7 +756,6 @@ export const DropdownTrigger: React.FC<DropdownTriggerProps> = ({
 }) => {
   const [internalOpen, setInternalOpen] = useState(false);
   const [hovered, setHovered] = useState(false);
-
   const isOpen = controlledOpen !== undefined ? controlledOpen : internalOpen;
   const isPrimary = variant === 'primary';
 
@@ -812,7 +780,6 @@ export const DropdownTrigger: React.FC<DropdownTriggerProps> = ({
         ${className}
       `}
     >
-      {/* 文字区 */}
       <span className={`
         inline-flex items-center px-4 py-[5px] text-[14px] leading-[22px] font-normal
         ${isPrimary ? 'text-white' : 'text-[#1D2129]'}
@@ -820,42 +787,19 @@ export const DropdownTrigger: React.FC<DropdownTriggerProps> = ({
         {label}
       </span>
 
-      {/* 图标区 */}
       <span className={`
         inline-flex items-center justify-center w-8
         ${isPrimary ? 'bg-[#00AAA6] border-l border-[#22BBB3]' : 'bg-white border-l border-[#E5E6EB]'}
       `}>
         <span className={`inline-flex transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}>
           <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-            <path
-              d="M3.5 5.5L7 9L10.5 5.5"
-              stroke="currentColor"
-              strokeWidth="1.5"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
+            <path d="M3.5 5.5L7 9L10.5 5.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
         </span>
       </span>
     </button>
   );
 };
-```
-
-### 6.7 使用示例
-
-```tsx
-// 主要（默认）
-<DropdownTrigger label="渠道" onClick={toggleDropdown} />
-
-// 次要
-<DropdownTrigger variant="secondary" label="排序" />
-
-// 展开态
-<DropdownTrigger label="渠道" open={true} onClick={toggleDropdown} />
-
-// 禁用
-<DropdownTrigger label="渠道" disabled />
 ```
 
 ---
@@ -880,23 +824,10 @@ export const DropdownTrigger: React.FC<DropdownTriggerProps> = ({
 **范围模式** (范围=true):
 ```
 datepicker（HORIZONTAL, 4px 圆角, 32px 高）
-├── input（开始日期）
-│   ├── 文字 "开始日期"（14px, #86909C placeholder → #1D2129 有值）
-│   └── (内部 padding-left: 8px)
-├── input（分隔符 "-"）
-│   └── 文字 "-"（14px, Roboto Regular, #86909C）
-├── input（结束日期）
-│   └── 文字 "结束日期"（14px, #86909C）
-└── suffix（日历图标）
-    └── icon-wrapper > calendar icon（14×14）
-```
-
-**单日模式** (范围=false):
-```
-datepicker
-├── input（单日选择）
-│   └── 文字 "选择日期"
-└── suffix（日历图标）
+├── input "开始日期"（14px, #86909C → #1D2129）
+├── input "-"（分隔符）
+├── input "结束日期"
+└── suffix（日历图标 14×14）
 ```
 
 ### 7.3 视觉规格
@@ -908,44 +839,26 @@ datepicker
 | 背景 | `#FFFFFF` |
 | 边框 | `1px solid #E5E6EB` |
 | 圆角 | `4px` |
-| 输入框内距 | `left: 8px` |
-| 输入框间距 | `35px`（Figma 内 gap，仅用于占位布局） |
-| 字体 | `PingFang SC Regular` 14px（中文）/ `Roboto Regular` 14px（分隔符） |
+| 字体 | `PingFang SC Regular` 14px / `Roboto Regular` 14px（分隔符） |
 | 行高 | `22px` |
-| 后缀图标 | calendar icon, 14×14 |
 
-### 7.4 状态
-
-| 属性 | 默认 | 悬停 | 聚焦/激活 | 禁用 |
-|---|---|---|---|---|
-| 边框色 | `#E5E6EB` | `#C9CDD4` | `#00AAA6` + 外发光 | `#E5E6EB` |
-| 背景 | `#FFF` | `#FFF` | `#FFF` | opacity 30% |
-
-### 7.5 Props API
+### 7.4 Props API
 
 ```typescript
 interface DatePickerProps {
-  /** 是否为日期范围 */
   range?: boolean;
-  /** 是否包含时间选择 */
   showTime?: boolean;
-  /** 填充模式 */
   filled?: boolean;
-  /** 禁用 */
   disabled?: boolean;
-  /** 占位文字（范围模式为 [start, end]） */
   placeholder?: string | [string, string];
-  /** 选中值 */
   value?: Date | [Date, Date] | null;
-  /** 值变化 */
   onChange?: (value: Date | [Date, Date] | null) => void;
-  /** 日期格式 */
   format?: string;
   className?: string;
 }
 ```
 
-### 7.6 React 实现
+### 7.5 React 实现
 
 ```tsx
 import React, { useState, useRef, useEffect } from 'react';
@@ -987,8 +900,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
   }, []);
 
   const formatDate = (d: Date): string => {
-    // 简化实现，实际项目使用 date-fns / dayjs
-    return d.toISOString().split('T')[0];
+    return d.toISOString().split('T')[0]; // 简化，实际用 date-fns/dayjs
   };
 
   const borderClass = (() => {
@@ -1026,7 +938,6 @@ export const DatePicker: React.FC<DatePickerProps> = ({
         </>
       );
     }
-
     return <span className="text-[#1D2129] text-[14px]">{formatDate(value as Date)}</span>;
   };
 
@@ -1049,11 +960,8 @@ export const DatePicker: React.FC<DatePickerProps> = ({
       onBlur={() => setFocused(false)}
       tabIndex={disabled ? -1 : 0}
     >
-      <div className="flex items-center gap-2">
-        {renderValue()}
-      </div>
+      <div className="flex items-center gap-2">{renderValue()}</div>
 
-      {/* 日历图标 */}
       <span className="inline-flex items-center justify-center ml-2 flex-shrink-0">
         <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
           <rect x="1.5" y="2.5" width="11" height="10" rx="1.5" stroke="currentColor" strokeWidth="1"/>
@@ -1062,7 +970,6 @@ export const DatePicker: React.FC<DatePickerProps> = ({
         </svg>
       </span>
 
-      {/* 日历面板占位 — 实际项目使用第三方 date picker 库 */}
       {isOpen && (
         <div className="absolute top-full left-0 mt-1 bg-white border border-[#E5E6EB] rounded-[4px] shadow-lg z-50 p-3">
           <div className="text-[14px] text-[#86909C] text-center">日历面板（集成第三方库）</div>
@@ -1071,22 +978,6 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     </div>
   );
 };
-```
-
-### 7.7 使用示例
-
-```tsx
-// 日期范围
-<DatePicker range value={[startDate, endDate]} onChange={(v) => setRange(v as [Date, Date])} />
-
-// 单日
-<DatePicker range={false} placeholder="选择日期" value={date} onChange={setDate} />
-
-// 含时间
-<DatePicker range showTime value={range} onChange={setRange} />
-
-// 禁用
-<DatePicker disabled />
 ```
 
 ---
@@ -1109,63 +1000,45 @@ export const DatePicker: React.FC<DatePickerProps> = ({
 ### 8.2 结构
 
 ```
-inputtag（VERTICAL 布局，FIXED counterAxis width=220px, HUG height）
-└── input-tag-view（HORIZONTAL, FILL width, 垂直居中）
-    └── title（placeholder "Please input" / 带标签的内容）
-        - 空态: 显示 placeholder
-        - 有标签: 显示 Tag × N + 输入光标
+inputtag（VERTICAL 布局 ⚠️ 区别于 Select/Input 的 HORIZONTAL）
+└── input-tag-view（HORIZONTAL, FILL width）
+    └── title（placeholder "Please input" / Tag × N + 输入光标）
 ```
 
 ### 8.3 尺寸对照
 
-| 尺寸 | 高度 (min) | 宽度 | Padding | 字号 |
+| 尺寸 | 最小高度 | 宽度 | Padding | 字号 |
 |---|---|---|---|---|
-| 大 | `36px` | `220px` (FIXED) | `5px 12px` | `14px` |
-| 中 | `32px` | `220px` (FIXED) | `4px 12px` | `14px` |
+| 大 | `36px` | `220px` | `5px 12px` | `14px` |
+| 中 | `32px` | `220px` | `4px 12px` | `14px` |
 | 小 | `28px` | HUG | `2px 8px` | `12px` |
 | 迷你 | `24px` | HUG | `1px 8px` | `12px` |
 
-> **关键差异**: InputTag 使用 **VERTICAL 布局**（区别于 Select/Input 的 HORIZONTAL），这意味着标签可以多行换行，高度自适应（HUG）。
+> **关键**: VERTICAL 布局允许标签多行换行，高度自适应（HUG）。
 
 ### 8.4 视觉规格
 
 | 属性 | 值 |
 |---|---|
-| 布局方向 | VERTICAL（与 Select/Input 不同） |
-| 最小高度 | `32px`（中尺寸） |
-| 最大宽度 | `220px`（中尺寸） |
+| 布局方向 | VERTICAL |
 | 背景 | `#FFFFFF` |
-| 边框 | `1px solid #C9CDD4`（默认比 Select/Input 更深） |
+| 边框 | `1px solid #C9CDD4`（⚠️ 默认比 Select/Input 深） |
 | 圆角 | `4px` |
-| Padding | `4px 12px`（中尺寸） |
-| 内部间距 | `10px`（VERTICAL gap） |
 | placeholder 色 | `#86909C` |
 
-### 8.5 状态
-
-| 属性 | 默认 | 悬停 | 聚焦 | 禁用 |
-|---|---|---|---|---|
-| 边框色 | `#C9CDD4` ⚠️ 比 Select/Input 默认态更深 | `#00AAA6` | `#00AAA6` | `#E5E6EB` |
-| 背景 | `#FFF` | `#FFF` | `#FFF` | opacity 30% |
-| placeholder | `#86909C` | 不变 | 不变 | opacity 30% |
-
-> **注意**: InputTag 默认边框色是 `#C9CDD4`（而不是 `#E5E6EB`），与 Select/Input 不同。
-
-### 8.6 标签样式（自定义标签=false）
-
-默认标签样式（Figma 中不展开自定义标签时，标签由内部逻辑生成）:
+### 8.5 默认标签样式
 
 | 属性 | 值 |
 |---|---|
-| 背景 | `#E5F6F6` (teal-50 变体) |
+| 背景 | `#E5F6F6` |
 | 文字色 | `#00AAA6` |
 | 字号 | `12px` |
 | 高度 | `22px` |
 | 圆角 | `2px` |
 | Padding | `2px 6px` |
-| 删除按钮 | `×` 图标，10×10，hover 变 `#F53F3F` |
+| 删除按钮 | `×` 图标, 10×10, hover `#F53F3F` |
 
-### 8.7 Props API
+### 8.6 Props API
 
 ```typescript
 type InputTagSize = 'large' | 'medium' | 'small' | 'mini';
@@ -1174,28 +1047,17 @@ interface InputTagProps {
   size?: InputTagSize;
   filled?: boolean;
   disabled?: boolean;
-  placeholder?: string;          // 默认 "Please input"
-  /** 标签列表 */
+  placeholder?: string;
   tags?: string[];
-  /** 标签变化（增删） */
   onTagsChange?: (tags: string[]) => void;
-  /** 自定义标签渲染 */
   renderTag?: (tag: string, onRemove: () => void) => React.ReactNode;
-  /** 输入框值 */
-  inputValue?: string;
-  /** 输入变化 */
-  onInputChange?: (value: string) => void;
-  /** 按下回车 / 分隔符时添加标签 */
-  onTagAdd?: (tag: string) => void;
-  /** 分隔符（默认逗号、回车） */
   separators?: string[];
-  /** 最大标签数 */
   maxTags?: number;
   className?: string;
 }
 ```
 
-### 8.8 React 实现
+### 8.7 React 实现
 
 ```tsx
 import React, { useState, useRef, KeyboardEvent } from 'react';
@@ -1246,8 +1108,7 @@ export const InputTag: React.FC<InputTagProps> = ({
 
   const addTag = (text: string) => {
     const trimmed = text.trim();
-    if (!trimmed) return;
-    if (tags.includes(trimmed)) return;
+    if (!trimmed || tags.includes(trimmed)) return;
     if (maxTags !== undefined && tags.length >= maxTags) return;
     onTagsChange?.([...tags, trimmed]);
     setInputValue('');
@@ -1265,15 +1126,11 @@ export const InputTag: React.FC<InputTagProps> = ({
     }
   };
 
-  const handleContainerClick = () => {
-    if (!disabled) inputRef.current?.focus();
-  };
-
   const borderClass = (() => {
     if (disabled) return 'border-[#E5E6EB]';
     if (focused) return 'border-[#00AAA6]';
     if (hovered) return 'border-[#00AAA6]';
-    return 'border-[#C9CDD4]'; // ⚠️ 默认更深
+    return 'border-[#C9CDD4]'; // ⚠️ default deeper than Select/Input
   })();
 
   const DefaultTag: React.FC<{ text: string; onRemove: () => void }> = ({ text, onRemove }) => (
@@ -1301,11 +1158,10 @@ export const InputTag: React.FC<InputTagProps> = ({
         ${borderClass}
         ${className}
       `}
-      onClick={handleContainerClick}
+      onClick={() => inputRef.current?.focus()}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* 标签列表 */}
       {tags.map((tag, idx) =>
         renderTag ? (
           <span key={`${tag}-${idx}`}>{renderTag(tag, () => handleRemove(idx))}</span>
@@ -1314,7 +1170,6 @@ export const InputTag: React.FC<InputTagProps> = ({
         )
       )}
 
-      {/* 输入区 */}
       <input
         ref={inputRef}
         type="text"
@@ -1327,44 +1182,13 @@ export const InputTag: React.FC<InputTagProps> = ({
         disabled={disabled}
         className={`
           flex-1 min-w-[60px] outline-none bg-transparent
-          text-[#1D2129] placeholder-[#86909C]
-          leading-[22px]
+          text-[#1D2129] placeholder-[#86909C] leading-[22px]
           ${disabled ? 'cursor-not-allowed' : ''}
         `}
       />
     </div>
   );
 };
-```
-
-### 8.9 使用示例
-
-```tsx
-// 基础标签输入
-<InputTag
-  placeholder="请输入关键词后按回车"
-  tags={tags}
-  onTagsChange={setTags}
-/>
-
-// 自定义标签渲染 + 最大数量
-<InputTag
-  tags={selected}
-  onTagsChange={setSelected}
-  maxTags={5}
-  renderTag={(tag, onRemove) => (
-    <span className="bg-[#EDF1FF] text-[#6B60EC] rounded-[2px] px-2 py-0.5 text-[12px]">
-      {tag}
-      <button onClick={onRemove} className="ml-1 hover:text-[#F53F3F]">×</button>
-    </span>
-  )}
-/>
-
-// 小尺寸填充模式
-<InputTag size="small" filled placeholder="输入标签" tags={tags} onTagsChange={setTags} />
-
-// 禁用
-<InputTag disabled tags={['标签1', '标签2']} />
 ```
 
 ---
@@ -1377,62 +1201,40 @@ export const InputTag: React.FC<InputTagProps> = ({
 src/
 ├── components/
 │   └── filter/
-│       ├── index.ts              # 统一导出
-│       ├── FilterBar.tsx         # 筛选栏容器（待实现）
-│       ├── FilterItem.tsx        # 筛选条件外层包装
-│       ├── Select.tsx            # 选择器
-│       ├── Input.tsx             # 输入框
-│       ├── DropdownTrigger.tsx   # 下拉菜单按钮
-│       ├── DatePicker.tsx        # 日期选择器
-│       └── InputTag.tsx          # 标签输入框
+│       ├── index.ts
+│       ├── FilterBar.tsx
+│       ├── FilterItem.tsx
+│       ├── Select.tsx
+│       ├── Input.tsx
+│       ├── DropdownTrigger.tsx
+│       ├── DatePicker.tsx
+│       └── InputTag.tsx
 └── styles/
-    └── filter-tokens.css         # 设计令牌 CSS 变量
+    └── filter-tokens.css
 ```
 
 ### 9.2 设计令牌 CSS
 
 ```css
-/* filter-tokens.css */
 :root {
-  /* 主色 */
   --filter-primary: #00AAA6;
   --filter-primary-hover: #008C89;
   --filter-primary-light: #22BBB3;
-
-  /* 文字 */
   --filter-text-primary: #1D2129;
   --filter-text-placeholder: #86909C;
   --filter-text-secondary: #4E5969;
-
-  /* 边框 */
   --filter-border-default: #E5E6EB;
   --filter-border-hover: #C9CDD4;
-
-  /* 背景 */
   --filter-bg-white: #FFFFFF;
   --filter-bg-filled: #F7F8FA;
-
-  /* 状态 */
   --filter-focus-ring: #6B60EC;
   --filter-error: #F53F3F;
-
-  /* 圆角 */
   --filter-radius-sm: 2px;
   --filter-radius-md: 4px;
 }
 ```
 
-### 9.3 从现有项目迁移
-
-当前项目使用 React + Tailwind CSS v4 + Vite 构建。迁移步骤：
-
-1. **安装依赖**（如需日期库）: `npm install date-fns`
-2. **复制组件文件** 到 `src/components/filter/`
-3. **添加 CSS token** 到全局样式
-4. **替换现有筛选区** 为 `<FilterBar>` + `<FilterItem>` 组合
-5. **逐步替换**：先换一个 FilterItem，验证后再全部替换
-
-### 9.4 使用示例：完整筛选栏
+### 9.3 完整筛选栏示例
 
 ```tsx
 import { FilterItem, Select, Input, DatePicker, InputTag, DropdownTrigger } from '@/components/filter';
@@ -1445,35 +1247,20 @@ function VocFilterBar() {
 
   return (
     <div className="flex items-center gap-0">
-      {/* 下拉按钮 */}
       <DropdownTrigger label="渠道" onClick={togglePanel} />
 
-      {/* 筛选条件组 */}
       <div className="flex items-center">
         <FilterItem label="渠道" type="select">
-          <Select
-            placeholder="请选择渠道"
-            options={channelOptions}
-            value={channel}
-            onChange={setChannel}
-          />
+          <Select placeholder="请选择渠道" options={channelOptions} value={channel} onChange={setChannel} />
         </FilterItem>
-
         <FilterItem label="关键词" isFirst={false}>
-          <Input
-            placeholder="请输入关键词"
-            value={keyword}
-            onChange={setKeyword}
-            allowClear
-          />
+          <Input placeholder="请输入关键词" value={keyword} onChange={setKeyword} allowClear />
         </FilterItem>
-
         <FilterItem label="日期" isFirst={false} isLast>
           <DatePicker range value={dateRange} onChange={setDateRange} />
         </FilterItem>
       </div>
 
-      {/* 标签输入（独立使用） */}
       <InputTag tags={tags} onTagsChange={setTags} placeholder="添加标签" />
     </div>
   );
@@ -1484,15 +1271,15 @@ function VocFilterBar() {
 
 ## 10. 待完善事项
 
-- [ ] **FilterBar 容器**: 自动管理 FilterItem 边框合并、间距、响应式换行
+- [ ] **FilterBar 容器**: 自动管理边框合并、响应式换行
 - [ ] **Select 增强**: 搜索过滤、虚拟滚动、键盘导航、无障碍
-- [ ] **DatePicker 集成**: 接入 date-fns / dayjs + 第三方日历面板组件
-- [ ] **InputTag 粘贴**: 支持批量粘贴（逗号/空格分隔）
-- [ ] **Dropdown 面板**: 实现完整下拉菜单面板（选项列表、分组、操作项）
+- [ ] **DatePicker 集成**: 接入 date-fns/dayjs + 第三方日历面板
+- [ ] **InputTag 粘贴**: 批量粘贴支持
+- [ ] **Dropdown 面板**: 完整下拉菜单面板
 - [ ] **单元测试**: Vitest + React Testing Library
-- [ ] **Storybook**: 各组件的交互式文档
-- [ ] **响应式**: 小屏幕下筛选栏折叠/展开逻辑
+- [ ] **Storybook**: 交互式组件文档
+- [ ] **响应式**: 小屏幕折叠逻辑
 
 ---
 
-> **后续迭代**: 每完成一个组件的实现、测试、Storybook，回来更新此文档对应章节，标注完成状态。其他组件（表格、图表、侧边栏等）的组件化文档参照此模板在 `docs/components/` 下新建。
+> **⚠️ 重要**: 此仓库使用 GitHub Pages 且配置为从根目录 (`/`) 提供服务。**绝对不要**在仓库根目录创建名为 `docs`、`doc` 的目录（会与 GitHub Pages 的 `/docs` 源选项冲突导致页面白屏）。组件规范文档统一放在 `component-specs/` 目录下。
