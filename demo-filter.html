@@ -27,7 +27,8 @@ h2{font-size:16px;font-weight:500;margin:32px 0 12px}
    1. DropdownTrigger 下拉菜单按钮
    node-id=3263-32448
    ============================================================ */
-.dd{display:inline-flex;align-items:stretch;border-radius:var(--r-sm);overflow:hidden;cursor:pointer;height:32px;user-select:none;transition:opacity .2s}
+.dd{display:inline-flex;align-items:stretch;border-radius:var(--r-sm);overflow:hidden;cursor:pointer;height:32px;user-select:none;transition:opacity .2s;margin:0 8px}
+.dd:first-child{margin-left:0}.dd:last-child{margin-right:0}
 .dd.pri{background:var(--p);color:#fff}
 .dd.pri:hover{background:var(--ph)}
 .dd-text{display:inline-flex;align-items:center;padding:5px 16px;font-size:14px;line-height:22px;font-weight:400}
@@ -45,28 +46,27 @@ h2{font-size:16px;font-weight:500;margin:32px 0 12px}
 /* FilterBar — 水平排列容器 */
 .fb{display:inline-flex;align-items:stretch}
 
-/* FilterItem — 单个筛选条件 */
+/* FilterItem — 单个筛选条件，左右独立边框，不合并 */
 .fi{display:inline-flex;align-items:stretch;height:32px;background:var(--bgw);min-width:0}
-/* 左侧 Label 区 — border 上/下/左，无右边框，左侧圆角 */
+/* FilterBar — 多 item 有间距，不合并边框 */
+.fb{display:inline-flex;align-items:stretch;gap:8px}
+
+/* 左侧 Label 区 — border 上/下/左，无右边框（右侧开放给 control） */
 .fi-label{
   display:inline-flex;align-items:center;padding:3px 12px;gap:4px;
   border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);border-left:1px solid var(--bd);
+  border-radius:var(--r-md) 0 0 var(--r-md);
   font-size:14px;line-height:22px;color:var(--tp);font-weight:400;
   white-space:nowrap;cursor:default;
-  max-width:33.333%;           /* 不超过 filter-item 宽度的 1/3 */
+  max-width:33.333%;
   overflow:hidden;
 }
 .fi-label-text{
   overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
   max-width:100%;
 }
-/* 首个 FilterItem 的 label 左侧圆角 */
-.fi:first-child .fi-label{border-radius:var(--r-md) 0 0 var(--r-md)}
-/* 非首个 FilterItem 的 label 无左边框（与前一个 item 的 control 合并） */
-.fi+.fi .fi-label{border-left:none}
-/* 最后一个 FilterItem 的 label 无右边框时，由 control 的右边框收尾 */
 
-/* Label 可下拉态 — 悬浮有箭头 */
+/* Label 可下拉态 */
 .fi-label.drop{cursor:pointer}
 .fi-label.drop:hover{color:var(--p)}
 .fi-label.drop .fi-label-arrow{
@@ -76,30 +76,23 @@ h2{font-size:16px;font-weight:500;margin:32px 0 12px}
 .fi-label.drop:hover .fi-label-arrow{color:var(--tp)}
 .fi-label.drop.open .fi-label-arrow{transform:rotate(180deg)}
 
-/* 右侧 Control 区 — 交互主体，hover/focus/active 只作用于这里，占剩余 2/3 宽度 */
+/* 右侧 Control 区 — border 上下左右四边完整，hover/focus 仅作用于此 */
 .fi-control{
   display:inline-flex;align-items:center;gap:4px;padding:3px 12px;
   font-size:14px;line-height:22px;cursor:pointer;
   background:var(--bgw);
   border:1px solid var(--bd);
+  border-radius:0 var(--r-md) var(--r-md) 0;
   transition:border-color .2s,box-shadow .2s;
   position:relative;
   white-space:nowrap;
-  flex:1;min-width:0;            /* 自适应占满剩余空间 */
+  flex:1;min-width:0;
 }
-/* Control hover — 仅 control 区域变色 */
 .fi-control:hover{border-color:var(--bdh)}
-/* Control focus/active — 展开时高亮 */
 .fi-control:focus,.fi-control:focus-within,.fi-control.active{
   border-color:var(--p);box-shadow:0 0 0 2px rgba(0,170,166,.3);outline:none;
 }
-/* 首个 FilterItem 的 control */
-.fi:first-child .fi-control{border-radius:0 var(--r-md) var(--r-md) 0}
-/* 中间 FilterItem 的 control — 无圆角 */
-.fi:not(:first-child):not(:last-child) .fi-control{border-radius:0}
-/* 末尾 FilterItem 的 control — 右侧圆角 */
-.fi:last-child .fi-control{border-radius:0 var(--r-md) var(--r-md) 0}
-/* 独立 FilterItem — 只有 control 无 label 时，四边完整圆角 */
+/* 独立使用无 label 时四边完整圆角 */
 .fi.solo .fi-control{border-radius:var(--r-md)}
 
 /* control 内文字 */
