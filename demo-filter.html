@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>VocInsight 筛选器组件 Demo — Figma 设计规范</title>
+<style>
+/* ====== Design Tokens ====== */
+:root{
+  --p:#00AAA6;--ph:#008C89;--pl:#22BBB3;
+  --fr:#6B60EC;--tp:#1D2129;--tph:#86909C;
+  --bd:#E5E6EB;--bdh:#C9CDD4;--bgf:#F7F8FA;
+  --font:"PingFang SC",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font);background:#F5F7FA;color:var(--tp);padding:40px}
+h1{font-size:22px;font-weight:600;margin-bottom:8px}
+h2{font-size:16px;font-weight:500;margin:32px 0 12px;color:var(--p)}
+.subtitle{color:var(--tph);font-size:14px;margin-bottom:24px}
+.section{background:#fff;border-radius:8px;padding:24px;margin-bottom:24px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.label{font-size:14px;color:var(--tph);min-width:100px}
+
+/* ====== 1. DropdownTrigger ====== */
+.dd{display:inline-flex;align-items:stretch;border-radius:2px;overflow:hidden;cursor:pointer;height:32px;user-select:none}
+.dd.primary{background:var(--p);color:#fff}
+.dd.primary:hover{background:var(--ph)}
+.dd-text{display:inline-flex;align-items:center;padding:5px 16px;font-size:14px;line-height:22px;font-weight:400}
+.dd-icon{display:inline-flex;align-items:center;justify-content:center;width:32px;border-left:1px solid var(--pl)}
+.dd-icon svg{transition:transform .2s}
+.dd-icon.open svg{transform:rotate(180deg)}
+
+/* ====== 2. FilterItem + FilterBar ====== */
+.fb{display:inline-flex;align-items:center}
+.fi{display:inline-flex;align-items:center;height:32px;background:#fff;border:1px solid var(--bd);padding:3px 12px;gap:4px;font-size:14px;line-height:22px;transition:border-color .2s;white-space:nowrap}
+.fi:hover{border-color:var(--bdh)}
+.fi:first-child{border-radius:4px 0 0 4px}
+.fi:last-child{border-radius:0 4px 4px 0}
+.fi:only-child{border-radius:4px}
+.fi+.fi{margin-left:-1px}
+.fi-label{color:var(--tp);font-weight:400}
+
+/* ====== 3. Select ====== */
+.sel{position:relative;display:inline-flex;align-items:center;gap:4px;height:32px;padding:3px 12px;background:#fff;border:1px solid var(--bd);border-radius:4px;font-size:14px;line-height:22px;cursor:pointer;transition:border-color .2s,box-shadow .2s;min-width:120px}
+.sel:hover{border-color:var(--bdh)}
+.sel:focus,.sel.open{border-color:var(--p);box-shadow:0 0 0 2px rgba(0,170,166,.3);outline:none}
+.sel-text{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sel-text.ph{color:var(--tph)}
+.sel-arrow{display:inline-flex;flex-shrink:0;transition:transform .2s}.sel.open .sel-arrow{transform:rotate(180deg)}
+.sel-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid var(--bd);border-radius:4px;box-shadow:0 4px 12px rgba(0,0,0,.1);z-index:100;display:none;max-height:200px;overflow-y:auto}
+.sel.open .sel-dropdown{display:block}
+.sel-opt{padding:6px 12px;font-size:14px;cursor:pointer;transition:background .15s}
+.sel-opt:hover{background:var(--bgf)}
+.sel-opt.active{color:var(--p);background:#E5F6F6}
+
+/* ====== 4. Input ====== */
+.inp-wrap{display:inline-flex;align-items:center;gap:4px;height:32px;padding:0 12px;background:#fff;border:1px solid var(--bd);border-radius:4px;font-size:14px;transition:border-color .2s,box-shadow .2s;min-width:160px}
+.inp-wrap:hover{border-color:var(--bdh)}
+.inp-wrap:focus-within{border-color:var(--p);box-shadow:0 0 0 2px rgba(107,96,236,.3)}
+.inp-wrap input{flex:1;min-width:0;border:none;outline:none;background:transparent;color:var(--tp);font-family:var(--font);font-size:14px;line-height:22px}
+.inp-wrap input::placeholder{color:var(--tph)}
+.inp-clear{display:none;width:16px;height:16px;cursor:pointer;color:var(--tph);border-radius:50%;align-items:center;justify-content:center;font-size:12px;line-height:1;flex-shrink:0}
+.inp-wrap.has-value .inp-clear{display:inline-flex}
+.inp-clear:hover{color:#F53F3F}
+
+/* ====== 5. DatePicker ====== */
+.dp{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 12px;background:#fff;border:1px solid var(--bd);border-radius:4px;font-size:14px;line-height:22px;cursor:pointer;transition:border-color .2s,box-shadow .2s}
+.dp:hover{border-color:var(--bdh)}
+.dp:focus{border-color:var(--p);box-shadow:0 0 0 2px rgba(0,170,166,.3);outline:none}
+.dp-sep{color:var(--tph);font-family:Roboto,sans-serif}
+.dp-icon{flex-shrink:0;color:var(--tph)}
+
+/* ====== 6. InputTag ====== */
+.it{display:flex;flex-wrap:wrap;align-items:center;gap:4px;min-height:32px;padding:4px 12px;background:#fff;border:1px solid var(--bdh);border-radius:4px;font-size:14px;cursor:text;transition:border-color .2s;min-width:220px}
+.it:hover,.it:focus-within{border-color:var(--p)}
+.it input{flex:1;min-width:60px;border:none;outline:none;background:transparent;color:var(--tp);font-family:var(--font);font-size:14px;line-height:22px}
+.it input::placeholder{color:var(--tph)}
+.tag{display:inline-flex;align-items:center;gap:2px;background:#E5F6F6;color:var(--p);font-size:12px;line-height:20px;border-radius:2px;padding:2px 6px;white-space:nowrap}
+.tag-close{display:inline-flex;align-items:center;justify-content:center;width:10px;height:10px;cursor:pointer;transition:color .15s}
+.tag-close:hover{color:#F53F3F}
+
+/* ====== States demo ====== */
+.state-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.state-label{font-size:12px;color:var(--tph);min-width:50px}
+.sel.disabled,.inp-wrap.disabled,.dp.disabled,.dd.disabled,.it.disabled{opacity:.3;pointer-events:none}
+
+/* Size variants */
+.sel.lg,.inp-wrap.lg{height:36px}
+.sel.sm,.inp-wrap.sm{height:28px;font-size:12px;padding:2px 8px}
+.sel.xs,.inp-wrap.xs{height:24px;font-size:12px;padding:1px 8px}
+
+/* Filled variant */
+.sel.filled,.inp-wrap.filled,.dp.filled{background:var(--bgf);border-color:transparent}
+
+/* ====== Code block ====== */
+code{display:block;background:#1D2129;color:#E5E6EB;padding:12px 16px;border-radius:4px;font-size:13px;line-height:1.6;overflow-x:auto;margin-top:8px;font-family:"JetBrains Mono",monospace}
+</style>
+</head>
+<body>
+
+<h1>VocInsight 筛选器组件</h1>
+<p class="subtitle">基于 Figma 设计规范 — 文件 <code>eqZRNIxxbX8axZQthlTAwJ</code> (VOC_PC端组件)</p>
+
+<!-- ====== Section 1: Dropdown Trigger ====== -->
+<div class="section">
+<h2>1. DropdownTrigger 下拉菜单按钮 <small style="font-weight:400;color:var(--tph)">node-id=3263-32448</small></h2>
+<div class="row">
+  <span class="label">主要(默认):</span>
+  <div class="dd primary" onclick="this.querySelector('.dd-icon').classList.toggle('open')">
+    <span class="dd-text">渠道</span>
+    <span class="dd-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 5.5L7 9L10.5 5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+  </div>
+  <span class="label" style="margin-left:16px">禁用:</span>
+  <div class="dd primary disabled"><span class="dd-text">渠道</span><span class="dd-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 5.5L7 9L10.5 5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+</div>
+</div>
+
+<!-- ====== Section 2: FilterItem + FilterBar ====== -->
+<div class="section">
+<h2>2. FilterItem 筛选条件项 <small style="font-weight:400;color:var(--tph)">node-id=3320-11160</small></h2>
+<p style="font-size:14px;color:var(--tph);margin-bottom:12px">多个 FilterItem 通过 border-right:0 实现边框合并</p>
+
+<div class="row">
+  <span class="label">组合:</span>
+  <div class="fb">
+    <div class="fi"><span class="fi-label">渠道</span></div>
+    <div class="fi"><span class="fi-label">关键词</span></div>
+    <div class="fi"><span class="fi-label">日期范围</span></div>
+  </div>
+</div>
+
+<div class="row">
+  <span class="label">独立:</span>
+  <div class="fi" style="border-radius:4px;border:1px solid var(--bd)"><span class="fi-label">独立项</span></div>
+</div>
+
+<div class="row">
+  <span class="label">带Label:</span>
+  <div class="fi"><span class="fi-label">Label</span></div>
+</div>
+</div>
+
+<!-- ====== Section 3: Select ====== -->
+<div class="section">
+<h2>3. Select 选择器 <small style="font-weight:400;color:var(--tph)">node-id=3046-55643</small></h2>
+
+<div class="row">
+  <span class="label">默认:</span>
+  <div class="sel" tabindex="0" onclick="this.classList.toggle('open')">
+    <span class="sel-text ph">Please select</span>
+    <span class="sel-arrow"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 4L5 6.5L7.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <div class="sel-dropdown">
+      <div class="sel-opt">App Store</div>
+      <div class="sel-opt active">微信</div>
+      <div class="sel-opt">微博</div>
+      <div class="sel-opt">抖音</div>
+    </div>
+  </div>
+
+  <span class="label" style="margin-left:16px">已选:</span>
+  <div class="sel" tabindex="0" onclick="this.classList.toggle('open')">
+    <span class="sel-text">微信</span>
+    <span class="sel-arrow"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 4L5 6.5L7.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+    <div class="sel-dropdown">
+      <div class="sel-opt">App Store</div>
+      <div class="sel-opt active">微信</div>
+      <div class="sel-opt">微博</div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <span class="label">尺寸:</span>
+  <div class="sel lg"><span class="sel-text ph">大 36px</span><span class="sel-arrow"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 4L5 6.5L7.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+  <div class="sel"><span class="sel-text ph">中 32px</span><span class="sel-arrow"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 4L5 6.5L7.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+  <div class="sel sm"><span class="sel-text ph">小 28px</span><span class="sel-arrow"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 4L5 6.5L7.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+  <div class="sel xs"><span class="sel-text ph">迷你 24px</span><span class="sel-arrow"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 4L5 6.5L7.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+</div>
+
+<div class="row">
+  <span class="label">填充:</span>
+  <div class="sel filled"><span class="sel-text ph">填充模式</span><span class="sel-arrow"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 4L5 6.5L7.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+  <span class="label" style="margin-left:16px">禁用:</span>
+  <div class="sel disabled"><span class="sel-text ph">Disabled</span><span class="sel-arrow"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 4L5 6.5L7.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+</div>
+
+</div>
+
+<!-- ====== Section 4: Input ====== -->
+<div class="section">
+<h2>4. Input 输入框 <small style="font-weight:400;color:var(--tph)">node-id=3030-54078</small></h2>
+
+<div class="row">
+  <span class="label">默认:</span>
+  <div class="inp-wrap">
+    <input type="text" placeholder="请输入关键词" oninput="this.parentElement.classList.toggle('has-value',this.value.length>0)">
+    <span class="inp-clear" onclick="var i=this.parentElement.querySelector('input');i.value='';i.dispatchEvent(new Event('input'))">&times;</span>
+  </div>
+</div>
+
+<div class="row">
+  <span class="label">前缀图标:</span>
+  <div class="inp-wrap">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="flex-shrink:0;color:var(--tph)"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.5"/><path d="M9.5 9.5L13 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+    <input type="text" placeholder="搜索..." oninput="this.parentElement.classList.toggle('has-value',this.value.length>0)">
+    <span class="inp-clear" onclick="var i=this.parentElement.querySelector('input');i.value='';i.dispatchEvent(new Event('input'))">&times;</span>
+  </div>
+</div>
+
+<div class="row">
+  <span class="label">前置标签:</span>
+  <div style="display:inline-flex;align-items:center">
+    <span style="display:inline-flex;align-items:center;height:32px;padding:0 16px;background:#fff;border:1px solid var(--bd);border-right:0;border-radius:4px 0 0 4px;font-size:14px;color:var(--tp)">http://</span>
+    <div class="inp-wrap" style="border-radius:0 4px 4px 0">
+      <input type="text" placeholder="example.com">
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <span class="label">尺寸:</span>
+  <div class="inp-wrap lg"><input type="text" placeholder="大 36px"></div>
+  <div class="inp-wrap"><input type="text" placeholder="中 32px"></div>
+  <div class="inp-wrap sm"><input type="text" placeholder="小 28px"></div>
+  <div class="inp-wrap xs"><input type="text" placeholder="迷你 24px"></div>
+</div>
+
+<div class="row">
+  <span class="label">填充:</span>
+  <div class="inp-wrap filled"><input type="text" placeholder="填充模式"></div>
+  <span class="label" style="margin-left:16px">禁用:</span>
+  <div class="inp-wrap disabled"><input type="text" placeholder="Disabled" disabled></div>
+</div>
+</div>
+
+<!-- ====== Section 5: DatePicker ====== -->
+<div class="section">
+<h2>5. DatePicker 日期选择器 <small style="font-weight:400;color:var(--tph)">node-id=187-4087</small></h2>
+
+<div class="row">
+  <span class="label">范围:</span>
+  <div class="dp" tabindex="0">
+    <span class="ph" style="color:var(--tph)">开始日期</span>
+    <span class="dp-sep">-</span>
+    <span class="ph" style="color:var(--tph)">结束日期</span>
+    <span class="dp-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1.5" y="2.5" width="11" height="10" rx="1.5" stroke="currentColor" stroke-width="1"/><path d="M1 5.5H13" stroke="currentColor" stroke-width="1"/><path d="M4 1V3.5M10 1V3.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></span>
+  </div>
+
+  <span class="label" style="margin-left:16px">单日:</span>
+  <div class="dp" tabindex="0">
+    <span class="ph" style="color:var(--tph)">选择日期</span>
+    <span class="dp-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1.5" y="2.5" width="11" height="10" rx="1.5" stroke="currentColor" stroke-width="1"/><path d="M1 5.5H13" stroke="currentColor" stroke-width="1"/><path d="M4 1V3.5M10 1V3.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></span>
+  </div>
+</div>
+
+<div class="row">
+  <span class="label">填充:</span>
+  <div class="dp filled" tabindex="0">
+    <span class="ph" style="color:var(--tph)">开始日期</span><span class="dp-sep">-</span><span class="ph" style="color:var(--tph)">结束日期</span>
+    <span class="dp-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1.5" y="2.5" width="11" height="10" rx="1.5" stroke="currentColor" stroke-width="1"/><path d="M1 5.5H13" stroke="currentColor" stroke-width="1"/><path d="M4 1V3.5M10 1V3.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></span>
+  </div>
+  <span class="label" style="margin-left:16px">禁用:</span>
+  <div class="dp disabled" tabindex="0">
+    <span style="color:var(--tph)">2026-01-01</span>
+    <span class="dp-sep">-</span>
+    <span style="color:var(--tph)">2026-06-30</span>
+    <span class="dp-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1.5" y="2.5" width="11" height="10" rx="1.5" stroke="currentColor" stroke-width="1"/><path d="M1 5.5H13" stroke="currentColor" stroke-width="1"/><path d="M4 1V3.5M10 1V3.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></span>
+  </div>
+</div>
+</div>
+
+<!-- ====== Section 6: InputTag ====== -->
+<div class="section">
+<h2>6. InputTag 标签输入框 <small style="font-weight:400;color:var(--tph)">node-id=3030-54079</small></h2>
+
+<div class="row" style="align-items:flex-start">
+  <span class="label" style="margin-top:8px">默认:</span>
+  <div class="it" style="width:300px">
+    <span class="tag">用户体验<span class="tag-close" onclick="this.parentElement.remove()">&times;</span></span>
+    <span class="tag">界面设计<span class="tag-close" onclick="this.parentElement.remove()">&times;</span></span>
+    <input type="text" placeholder="输入标签后按回车" onkeydown="if(this.value&&event.key==='Enter'){var t=document.createElement('span');t.className='tag';t.innerHTML=this.value+'<span class=tag-close onclick=this.parentElement.remove()>&times;</span>';this.before(t);this.value=''}">
+  </div>
+</div>
+
+<div class="row">
+  <span class="label">空态:</span>
+  <div class="it" style="width:300px">
+    <input type="text" placeholder="Please input">
+  </div>
+</div>
+
+<div class="row">
+  <span class="label">禁用:</span>
+  <div class="it disabled" style="width:300px">
+    <span class="tag">标签1<span class="tag-close">&times;</span></span>
+    <span class="tag">标签2<span class="tag-close">&times;</span></span>
+    <input type="text" placeholder="" disabled>
+  </div>
+</div>
+</div>
+
+<!-- ====== Section 7: Combined Example ====== -->
+<div class="section">
+<h2>7. 组合示例 — 完整筛选栏</h2>
+<p style="font-size:14px;color:var(--tph);margin-bottom:16px">对应 Figma 中 filter-item (3320-11160) 的四种类型组合</p>
+
+<div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+  <!-- Dropdown Trigger -->
+  <div class="dd primary">
+    <span class="dd-text">渠道</span>
+    <span class="dd-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 5.5L7 9L10.5 5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+  </div>
+
+  <!-- Filter Items -->
+  <div class="fb">
+    <div class="fi">
+      <span class="fi-label">渠道</span>
+      <div class="sel" style="border:none;padding:0;min-width:0;height:auto;box-shadow:none" tabindex="0">
+        <span class="sel-text ph">Please select</span>
+        <span class="sel-arrow"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 4L5 6.5L7.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </div>
+    </div>
+    <div class="fi">
+      <span class="fi-label">关键词</span>
+      <div class="inp-wrap" style="border:none;padding:0;height:auto;box-shadow:none;min-width:0">
+        <input type="text" placeholder="请输入" style="width:100px">
+      </div>
+    </div>
+    <div class="fi">
+      <span class="fi-label">日期</span>
+      <span style="color:var(--tph);font-size:14px">开始日期</span>
+      <span class="dp-sep">-</span>
+      <span style="color:var(--tph);font-size:14px">结束日期</span>
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="color:var(--tph)"><rect x="1.5" y="2.5" width="11" height="10" rx="1.5" stroke="currentColor" stroke-width="1"/><path d="M1 5.5H13" stroke="currentColor" stroke-width="1"/><path d="M4 1V3.5M10 1V3.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+    </div>
+  </div>
+
+  <!-- InputTag -->
+  <div class="it">
+    <span class="tag">标签<span class="tag-close">&times;</span></span>
+    <input type="text" placeholder="添加标签" style="width:80px">
+  </div>
+</div>
+</div>
+
+<!-- ====== Section 8: Design Tokens ====== -->
+<div class="section">
+<h2>8. 设计令牌 Design Tokens</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;font-size:13px">
+  <div style="padding:12px;background:var(--p);color:#fff;border-radius:4px"><strong>Primary</strong><br>#00AAA6</div>
+  <div style="padding:12px;background:var(--ph);color:#fff;border-radius:4px"><strong>Hover</strong><br>#008C89</div>
+  <div style="padding:12px;background:var(--tp);color:#fff;border-radius:4px"><strong>Text</strong><br>#1D2129</div>
+  <div style="padding:12px;background:var(--tph);color:#fff;border-radius:4px"><strong>Placeholder</strong><br>#86909C</div>
+  <div style="padding:12px;background:var(--bd);color:var(--tp);border-radius:4px"><strong>Border</strong><br>#E5E6EB</div>
+  <div style="padding:12px;background:var(--bdh);color:#fff;border-radius:4px"><strong>Border Hover</strong><br>#C9CDD4</div>
+  <div style="padding:12px;background:var(--bgf);color:var(--tp);border-radius:4px"><strong>Filled BG</strong><br>#F7F8FA</div>
+  <div style="padding:12px;background:var(--fr);color:#fff;border-radius:4px"><strong>Focus Ring</strong><br>#6B60EC</div>
+</div>
+</div>
+
+</body>
+</html>
