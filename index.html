@@ -6,11 +6,41 @@
     <title>VocInsight BI 用户声量分析后台</title>
     <script type="module" src="./assets/index-upBFCwTy.js"></script>
     <link rel="stylesheet" href="./assets/index-DTe5EStQ.css">
-    <link rel="stylesheet" href="./assets/filter-figma.css">
+    <link rel="stylesheet" href="./assets/filter-figma.css?v=2">
+    <style>
+      :root{--voc-p:#00AAA6;--voc-ph:#008C89;--voc-fr:#6B60EC;--voc-tp:#1D2129;--voc-tph:#86909C;--voc-bd:#E5E6EB;--voc-bdh:#C9CDD4;--voc-font:"PingFang SC",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+      .voc-filter-bar{display:inline-flex;align-items:center}
+      .voc-filter-item{display:inline-flex;align-items:center;height:32px;background:#fff;border:1px solid #E5E6EB;padding:3px 12px;gap:4px;font-family:var(--voc-font);font-size:14px;line-height:22px;transition:border-color .2s;white-space:nowrap}
+      .voc-filter-item:hover{border-color:#C9CDD4}
+      .voc-filter-item:first-child{border-radius:4px 0 0 4px}
+      .voc-filter-item:last-child{border-radius:0 4px 4px 0}
+      .voc-filter-item:only-child{border-radius:4px}
+      .voc-select{display:inline-flex;align-items:center;gap:4px;height:32px;padding:3px 12px;background:#fff;border:1px solid #E5E6EB;border-radius:4px;font-family:var(--voc-font);font-size:14px;line-height:22px;cursor:pointer;transition:border-color .2s,box-shadow .2s}
+      .voc-select:hover{border-color:#C9CDD4}
+      .voc-select:focus,.voc-select:focus-within{border-color:#00AAA6;box-shadow:0 0 0 2px rgba(0,170,166,.3);outline:none}
+      .voc-select-text.placeholder{color:#86909C}
+      .voc-select-arrow{transition:transform .2s}.voc-select-arrow.open{transform:rotate(180deg)}
+      .voc-input-wrap{display:inline-flex;align-items:center;gap:4px;height:32px;padding:0 12px;background:#fff;border:1px solid #E5E6EB;border-radius:4px;font-family:var(--voc-font);font-size:14px;transition:border-color .2s,box-shadow .2s}
+      .voc-input-wrap:hover{border-color:#C9CDD4}
+      .voc-input-wrap:focus-within{border-color:#00AAA6;box-shadow:0 0 0 2px rgba(107,96,236,.3)}
+      .voc-input-wrap input{flex:1;min-width:0;border:none;outline:none;background:transparent;color:#1D2129;font-family:var(--voc-font);font-size:14px;line-height:22px}
+      .voc-input-wrap input::placeholder{color:#86909C}
+      .voc-dropdown{display:inline-flex;align-items:stretch;border-radius:2px;overflow:hidden;cursor:pointer;height:32px}
+      .voc-dropdown.primary{background:#00AAA6;color:#fff}
+      .voc-dropdown-text{display:inline-flex;align-items:center;padding:5px 16px;font-size:14px;line-height:22px}
+      .voc-dropdown-icon{display:inline-flex;align-items:center;justify-content:center;width:32px;border-left:1px solid #22BBB3}
+      .voc-dropdown-icon svg{transition:transform .2s}.voc-dropdown-icon.open svg{transform:rotate(180deg)}
+      .voc-datepicker{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 12px;background:#fff;border:1px solid #E5E6EB;border-radius:4px;font-family:var(--voc-font);font-size:14px;line-height:22px;cursor:pointer;transition:border-color .2s,box-shadow .2s}
+      .voc-datepicker:hover{border-color:#C9CDD4}
+      .voc-tag{display:inline-flex;align-items:center;gap:2px;background:#E5F6F6;color:#00AAA6;font-size:12px;border-radius:2px;padding:2px 6px;white-space:nowrap}
+      .voc-tag-close{cursor:pointer}.voc-tag-close:hover{color:#F53F3F}
+      [class*="sticky"][class*="z-30"]{box-shadow:0 1px 2px 0 rgba(0,0,0,.07),0 .5px 1px 0 rgba(0,0,0,.05)!important}
+      [class*="border"]:not([class*="voc"]):not([class*="border-b"]):not([class*="border-t"]):not([class*="border-l"]):not([class*="border-r"]){transition:border-color .2s,box-shadow .2s}
+    </style>
   </head>
   <body>
     <div id="root"></div>
-    <script src="./assets/filter-components.js"></script>
+    <script src="./assets/filter-components.js?v=2"></script>
   </body>
 </html>
 
