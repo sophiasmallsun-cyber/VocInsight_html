@@ -3,360 +3,582 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>VocInsight 筛选器组件 Demo — Figma 设计规范</title>
+<title>VocInsight 筛选器组件 — Figma 设计规范</title>
 <style>
 /* ====== Design Tokens ====== */
 :root{
-  --p:#00AAA6;--ph:#008C89;--pl:#22BBB3;
-  --fr:#6B60EC;--tp:#1D2129;--tph:#86909C;
-  --bd:#E5E6EB;--bdh:#C9CDD4;--bgf:#F7F8FA;
+  --p:#00AAA6;--ph:#008C89;--pl:#22BBB3;--fr:#6B60EC;
+  --tp:#1D2129;--tph:#86909C;--ts:#4E5969;
+  --bd:#E5E6EB;--bdh:#C9CDD4;--bgf:#F7F8FA;--bgw:#FFFFFF;
   --font:"PingFang SC",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --r-sm:2px;--r-md:4px;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:var(--font);background:#F5F7FA;color:var(--tp);padding:40px}
-h1{font-size:22px;font-weight:600;margin-bottom:8px}
-h2{font-size:16px;font-weight:500;margin:32px 0 12px;color:var(--p)}
-.subtitle{color:var(--tph);font-size:14px;margin-bottom:24px}
-.section{background:#fff;border-radius:8px;padding:24px;margin-bottom:24px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
-.row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}
-.label{font-size:14px;color:var(--tph);min-width:100px}
+h1{font-size:22px;font-weight:600;margin-bottom:4px}
+h2{font-size:16px;font-weight:500;margin:32px 0 12px}
+.sub{color:var(--tph);font-size:14px;margin-bottom:24px}
+.sec{background:var(--bgw);border-radius:8px;padding:24px;margin-bottom:20px;box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.row{display:flex;align-items:center;gap:16px;flex-wrap:wrap;margin-bottom:12px}
+.lbl{font-size:14px;color:var(--tph);min-width:80px;flex-shrink:0}
+.tip{font-size:12px;color:var(--tph);margin-bottom:8px}
 
-/* ====== 1. DropdownTrigger ====== */
-.dd{display:inline-flex;align-items:stretch;border-radius:2px;overflow:hidden;cursor:pointer;height:32px;user-select:none}
-.dd.primary{background:var(--p);color:#fff}
-.dd.primary:hover{background:var(--ph)}
+/* ============================================================
+   1. DropdownTrigger 下拉菜单按钮
+   node-id=3263-32448
+   ============================================================ */
+.dd{display:inline-flex;align-items:stretch;border-radius:var(--r-sm);overflow:hidden;cursor:pointer;height:32px;user-select:none;transition:opacity .2s}
+.dd.pri{background:var(--p);color:#fff}
+.dd.pri:hover{background:var(--ph)}
 .dd-text{display:inline-flex;align-items:center;padding:5px 16px;font-size:14px;line-height:22px;font-weight:400}
 .dd-icon{display:inline-flex;align-items:center;justify-content:center;width:32px;border-left:1px solid var(--pl)}
 .dd-icon svg{transition:transform .2s}
 .dd-icon.open svg{transform:rotate(180deg)}
+.dd.disabled{opacity:.3;pointer-events:none}
 
-/* ====== 2. FilterItem + FilterBar ====== */
-.fb{display:inline-flex;align-items:center}
-.fi{display:inline-flex;align-items:center;height:32px;background:#fff;border:1px solid var(--bd);padding:3px 12px;gap:4px;font-size:14px;line-height:22px;transition:border-color .2s;white-space:nowrap}
-.fi:hover{border-color:var(--bdh)}
-.fi:first-child{border-radius:4px 0 0 4px}
-.fi:last-child{border-radius:0 4px 4px 0}
-.fi:only-child{border-radius:4px}
-.fi+.fi{margin-left:-1px}
-.fi-label{color:var(--tp);font-weight:400}
+/* ============================================================
+   2. FilterItem — 筛选条件项
+   node-id=3320-11160
+   左: Label(可下拉) + 右: Control(交互)
+   左侧 border 上/下/左，右侧 control 有完整 border
+   ============================================================ */
+/* FilterBar — 水平排列容器 */
+.fb{display:inline-flex;align-items:stretch}
 
-/* ====== 3. Select ====== */
-.sel{position:relative;display:inline-flex;align-items:center;gap:4px;height:32px;padding:3px 12px;background:#fff;border:1px solid var(--bd);border-radius:4px;font-size:14px;line-height:22px;cursor:pointer;transition:border-color .2s,box-shadow .2s;min-width:120px}
+/* FilterItem — 单个筛选条件 */
+.fi{display:inline-flex;align-items:stretch;height:32px;background:var(--bgw);min-width:0}
+/* 左侧 Label 区 — border 上/下/左，无右边框，左侧圆角 */
+.fi-label{
+  display:inline-flex;align-items:center;padding:3px 12px;gap:4px;
+  border-top:1px solid var(--bd);border-bottom:1px solid var(--bd);border-left:1px solid var(--bd);
+  font-size:14px;line-height:22px;color:var(--tp);font-weight:400;
+  white-space:nowrap;cursor:default;
+  max-width:33.333%;           /* 不超过 filter-item 宽度的 1/3 */
+  overflow:hidden;
+}
+.fi-label-text{
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  max-width:100%;
+}
+/* 首个 FilterItem 的 label 左侧圆角 */
+.fi:first-child .fi-label{border-radius:var(--r-md) 0 0 var(--r-md)}
+/* 非首个 FilterItem 的 label 无左边框（与前一个 item 的 control 合并） */
+.fi+.fi .fi-label{border-left:none}
+/* 最后一个 FilterItem 的 label 无右边框时，由 control 的右边框收尾 */
+
+/* Label 可下拉态 — 悬浮有箭头 */
+.fi-label.drop{cursor:pointer}
+.fi-label.drop:hover{color:var(--p)}
+.fi-label.drop .fi-label-arrow{
+  display:inline-flex;flex-shrink:0;width:10px;height:10px;
+  transition:transform .2s;color:var(--tph);
+}
+.fi-label.drop:hover .fi-label-arrow{color:var(--tp)}
+.fi-label.drop.open .fi-label-arrow{transform:rotate(180deg)}
+
+/* 右侧 Control 区 — 交互主体，hover/focus/active 只作用于这里，占剩余 2/3 宽度 */
+.fi-control{
+  display:inline-flex;align-items:center;gap:4px;padding:3px 12px;
+  font-size:14px;line-height:22px;cursor:pointer;
+  background:var(--bgw);
+  border:1px solid var(--bd);
+  transition:border-color .2s,box-shadow .2s;
+  position:relative;
+  white-space:nowrap;
+  flex:1;min-width:0;            /* 自适应占满剩余空间 */
+}
+/* Control hover — 仅 control 区域变色 */
+.fi-control:hover{border-color:var(--bdh)}
+/* Control focus/active — 展开时高亮 */
+.fi-control:focus,.fi-control:focus-within,.fi-control.active{
+  border-color:var(--p);box-shadow:0 0 0 2px rgba(0,170,166,.3);outline:none;
+}
+/* 首个 FilterItem 的 control */
+.fi:first-child .fi-control{border-radius:0 var(--r-md) var(--r-md) 0}
+/* 中间 FilterItem 的 control — 无圆角 */
+.fi:not(:first-child):not(:last-child) .fi-control{border-radius:0}
+/* 末尾 FilterItem 的 control — 右侧圆角 */
+.fi:last-child .fi-control{border-radius:0 var(--r-md) var(--r-md) 0}
+/* 独立 FilterItem — 只有 control 无 label 时，四边完整圆角 */
+.fi.solo .fi-control{border-radius:var(--r-md)}
+
+/* control 内文字 */
+.fi-control-text{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.fi-control-text.ph{color:var(--tph)}
+/* control 内箭头 — 点击展开旋转180°，选完旋转回去 */
+.fi-control-arrow{
+  display:inline-flex;flex-shrink:0;width:10px;height:10px;transition:transform .2s;
+}
+.fi-control.active .fi-control-arrow{transform:rotate(180deg)}
+
+/* control 下拉面板 */
+.fi-dropdown{
+  position:absolute;top:calc(100% + 4px);left:0;min-width:100%;
+  background:var(--bgw);border:1px solid var(--bd);border-radius:var(--r-md);
+  box-shadow:0 4px 12px rgba(0,0,0,.1);z-index:100;
+  display:none;max-height:200px;overflow-y:auto;
+}
+.fi-control.active .fi-dropdown{display:block}
+.fi-opt{padding:6px 12px;font-size:14px;cursor:pointer;transition:background .15s;white-space:nowrap}
+.fi-opt:hover{background:var(--bgf)}
+.fi-opt.sel{color:var(--p);background:#E5F6F6}
+
+/* 禁用态 */
+.fi.disabled .fi-control,.fi.disabled .fi-label{opacity:.3;pointer-events:none}
+
+/* ============================================================
+   3. Input (输入框) 作为 control
+   ============================================================ */
+.fi-input-wrap{display:inline-flex;align-items:center;gap:4px;height:100%}
+.fi-input-wrap input{flex:1;min-width:60px;border:none;outline:none;background:transparent;color:var(--tp);font-family:var(--font);font-size:14px;line-height:22px}
+.fi-input-wrap input::placeholder{color:var(--tph)}
+.fi-input-clear{display:none;width:14px;height:14px;cursor:pointer;color:var(--tph);flex-shrink:0;align-items:center;justify-content:center;font-size:12px;border-radius:50%}
+.fi-control.has-val .fi-input-clear{display:inline-flex}
+.fi-input-clear:hover{color:#F53F3F}
+
+/* ============================================================
+   4. DatePicker 作为 control
+   ============================================================ */
+.fi-dp{display:inline-flex;align-items:center;gap:8px}
+.fi-dp-sep{color:var(--tph);font-family:Roboto,sans-serif}
+.fi-dp-icon{flex-shrink:0;color:var(--tph)}
+
+/* ============================================================
+   5. InputTag 作为 control
+   ============================================================ */
+.fi-tag-wrap{display:flex;flex-wrap:wrap;align-items:center;gap:4px}
+.fi-tag{display:inline-flex;align-items:center;gap:2px;background:#E5F6F6;color:var(--p);font-size:12px;line-height:20px;border-radius:var(--r-sm);padding:2px 6px;white-space:nowrap}
+.fi-tag-close{display:inline-flex;align-items:center;justify-content:center;width:10px;height:10px;cursor:pointer;transition:color .15s}
+.fi-tag-close:hover{color:#F53F3F}
+.fi-tag-wrap input{flex:1;min-width:60px;border:none;outline:none;background:transparent;color:var(--tp);font-family:var(--font);font-size:14px;line-height:22px}
+.fi-tag-wrap input::placeholder{color:var(--tph)}
+
+/* ============================================================
+   6. Select 独立组件 (不在 filter-item 中)
+   ============================================================ */
+.sel{display:inline-flex;align-items:center;gap:4px;height:32px;padding:3px 12px;background:var(--bgw);border:1px solid var(--bd);border-radius:var(--r-md);font-size:14px;line-height:22px;cursor:pointer;transition:border-color .2s,box-shadow .2s;position:relative;min-width:120px}
 .sel:hover{border-color:var(--bdh)}
-.sel:focus,.sel.open{border-color:var(--p);box-shadow:0 0 0 2px rgba(0,170,166,.3);outline:none}
+.sel.active{border-color:var(--p);box-shadow:0 0 0 2px rgba(0,170,166,.3);outline:none}
 .sel-text{flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .sel-text.ph{color:var(--tph)}
-.sel-arrow{display:inline-flex;flex-shrink:0;transition:transform .2s}.sel.open .sel-arrow{transform:rotate(180deg)}
-.sel-dropdown{position:absolute;top:calc(100% + 4px);left:0;right:0;background:#fff;border:1px solid var(--bd);border-radius:4px;box-shadow:0 4px 12px rgba(0,0,0,.1);z-index:100;display:none;max-height:200px;overflow-y:auto}
-.sel.open .sel-dropdown{display:block}
+.sel-arrow{display:inline-flex;flex-shrink:0;transition:transform .2s}
+.sel.active .sel-arrow{transform:rotate(180deg)}
+.sel-drop{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--bgw);border:1px solid var(--bd);border-radius:var(--r-md);box-shadow:0 4px 12px rgba(0,0,0,.1);z-index:100;display:none;max-height:200px;overflow-y:auto}
+.sel.active .sel-drop{display:block}
 .sel-opt{padding:6px 12px;font-size:14px;cursor:pointer;transition:background .15s}
 .sel-opt:hover{background:var(--bgf)}
-.sel-opt.active{color:var(--p);background:#E5F6F6}
+.sel-opt.sel{color:var(--p);background:#E5F6F6}
+.sel.disabled{opacity:.3;pointer-events:none}
 
-/* ====== 4. Input ====== */
-.inp-wrap{display:inline-flex;align-items:center;gap:4px;height:32px;padding:0 12px;background:#fff;border:1px solid var(--bd);border-radius:4px;font-size:14px;transition:border-color .2s,box-shadow .2s;min-width:160px}
-.inp-wrap:hover{border-color:var(--bdh)}
-.inp-wrap:focus-within{border-color:var(--p);box-shadow:0 0 0 2px rgba(107,96,236,.3)}
-.inp-wrap input{flex:1;min-width:0;border:none;outline:none;background:transparent;color:var(--tp);font-family:var(--font);font-size:14px;line-height:22px}
-.inp-wrap input::placeholder{color:var(--tph)}
-.inp-clear{display:none;width:16px;height:16px;cursor:pointer;color:var(--tph);border-radius:50%;align-items:center;justify-content:center;font-size:12px;line-height:1;flex-shrink:0}
-.inp-wrap.has-value .inp-clear{display:inline-flex}
-.inp-clear:hover{color:#F53F3F}
+/* ============================================================
+   Sizes for Select
+   ============================================================ */
+.sel.lg{height:36px}.sel.sm{height:28px;font-size:12px;padding:2px 8px}.sel.xs{height:24px;font-size:12px;padding:1px 8px}
 
-/* ====== 5. DatePicker ====== */
-.dp{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 12px;background:#fff;border:1px solid var(--bd);border-radius:4px;font-size:14px;line-height:22px;cursor:pointer;transition:border-color .2s,box-shadow .2s}
+/* ============================================================
+   Independent Input
+   ============================================================ */
+.inp{display:inline-flex;align-items:center;gap:4px;height:32px;padding:0 12px;background:var(--bgw);border:1px solid var(--bd);border-radius:var(--r-md);font-size:14px;transition:border-color .2s,box-shadow .2s;min-width:160px}
+.inp:hover{border-color:var(--bdh)}
+.inp:focus-within{border-color:var(--p);box-shadow:0 0 0 2px rgba(107,96,236,.3)}
+.inp input{flex:1;min-width:0;border:none;outline:none;background:transparent;color:var(--tp);font-family:var(--font);font-size:14px;line-height:22px}
+.inp input::placeholder{color:var(--tph)}
+.inp.clr{display:none;width:14px;height:14px;cursor:pointer;color:var(--tph);border-radius:50%;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.inp.has-val .inp.clr{display:inline-flex}
+.inp.clr:hover{color:#F53F3F}
+.inp.lg{height:36px}.inp.sm{height:28px;font-size:12px;padding:0 8px}.inp.xs{height:24px;font-size:12px;padding:0 8px}
+.inp.disabled{opacity:.3;pointer-events:none}
+
+/* ============================================================
+   Independent DatePicker
+   ============================================================ */
+.dp{display:inline-flex;align-items:center;gap:8px;height:32px;padding:0 12px;background:var(--bgw);border:1px solid var(--bd);border-radius:var(--r-md);font-size:14px;line-height:22px;cursor:pointer;transition:border-color .2s,box-shadow .2s}
 .dp:hover{border-color:var(--bdh)}
 .dp:focus{border-color:var(--p);box-shadow:0 0 0 2px rgba(0,170,166,.3);outline:none}
 .dp-sep{color:var(--tph);font-family:Roboto,sans-serif}
 .dp-icon{flex-shrink:0;color:var(--tph)}
+.dp.disabled{opacity:.3;pointer-events:none}
 
-/* ====== 6. InputTag ====== */
-.it{display:flex;flex-wrap:wrap;align-items:center;gap:4px;min-height:32px;padding:4px 12px;background:#fff;border:1px solid var(--bdh);border-radius:4px;font-size:14px;cursor:text;transition:border-color .2s;min-width:220px}
+/* ============================================================
+   Independent InputTag
+   ============================================================ */
+.it{display:flex;flex-wrap:wrap;align-items:center;gap:4px;min-height:32px;padding:4px 12px;background:var(--bgw);border:1px solid var(--bdh);border-radius:var(--r-md);font-size:14px;cursor:text;transition:border-color .2s;min-width:220px}
 .it:hover,.it:focus-within{border-color:var(--p)}
 .it input{flex:1;min-width:60px;border:none;outline:none;background:transparent;color:var(--tp);font-family:var(--font);font-size:14px;line-height:22px}
 .it input::placeholder{color:var(--tph)}
-.tag{display:inline-flex;align-items:center;gap:2px;background:#E5F6F6;color:var(--p);font-size:12px;line-height:20px;border-radius:2px;padding:2px 6px;white-space:nowrap}
-.tag-close{display:inline-flex;align-items:center;justify-content:center;width:10px;height:10px;cursor:pointer;transition:color .15s}
-.tag-close:hover{color:#F53F3F}
+.it.disabled{opacity:.3;pointer-events:none}
 
-/* ====== States demo ====== */
-.state-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
-.state-label{font-size:12px;color:var(--tph);min-width:50px}
-.sel.disabled,.inp-wrap.disabled,.dp.disabled,.dd.disabled,.it.disabled{opacity:.3;pointer-events:none}
-
-/* Size variants */
-.sel.lg,.inp-wrap.lg{height:36px}
-.sel.sm,.inp-wrap.sm{height:28px;font-size:12px;padding:2px 8px}
-.sel.xs,.inp-wrap.xs{height:24px;font-size:12px;padding:1px 8px}
-
-/* Filled variant */
-.sel.filled,.inp-wrap.filled,.dp.filled{background:var(--bgf);border-color:transparent}
-
-/* ====== Code block ====== */
-code{display:block;background:#1D2129;color:#E5E6EB;padding:12px 16px;border-radius:4px;font-size:13px;line-height:1.6;overflow-x:auto;margin-top:8px;font-family:"JetBrains Mono",monospace}
+/* ====== SVG icons ====== */
+svg.ico{display:inline-flex;flex-shrink:0}
 </style>
 </head>
 <body>
 
 <h1>VocInsight 筛选器组件</h1>
-<p class="subtitle">基于 Figma 设计规范 — 文件 <code>eqZRNIxxbX8axZQthlTAwJ</code> (VOC_PC端组件)</p>
+<p class="sub">Figma: <code>eqZRNIxxbX8axZQthlTAwJ</code> (VOC_PC端组件) — 按设计规范还原</p>
 
-<!-- ====== Section 1: Dropdown Trigger ====== -->
-<div class="section">
+<!-- ============================================================
+     Section 1: DropdownTrigger
+     ============================================================ -->
+<div class="sec">
 <h2>1. DropdownTrigger 下拉菜单按钮 <small style="font-weight:400;color:var(--tph)">node-id=3263-32448</small></h2>
 <div class="row">
-  <span class="label">主要(默认):</span>
-  <div class="dd primary" onclick="this.querySelector('.dd-icon').classList.toggle('open')">
+  <span class="lbl">主要:</span>
+  <div class="dd pri" id="dd1" onclick="this.querySelector('.dd-icon').classList.toggle('open')">
     <span class="dd-text">渠道</span>
     <span class="dd-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 5.5L7 9L10.5 5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
   </div>
-  <span class="label" style="margin-left:16px">禁用:</span>
-  <div class="dd primary disabled"><span class="dd-text">渠道</span><span class="dd-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 5.5L7 9L10.5 5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+  <span class="lbl" style="margin-left:16px">禁用:</span>
+  <div class="dd pri disabled"><span class="dd-text">渠道</span><span class="dd-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 5.5L7 9L10.5 5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
 </div>
 </div>
 
-<!-- ====== Section 2: FilterItem + FilterBar ====== -->
-<div class="section">
+<!-- ============================================================
+     Section 2: FilterItem — 核心组件
+     ============================================================ -->
+<div class="sec">
 <h2>2. FilterItem 筛选条件项 <small style="font-weight:400;color:var(--tph)">node-id=3320-11160</small></h2>
-<p style="font-size:14px;color:var(--tph);margin-bottom:12px">多个 FilterItem 通过 border-right:0 实现边框合并</p>
+<p class="tip">左右结构：左侧 Label（可下拉）+ 右侧 Control（交互区）。Hover/Focus 仅作用于右侧 Control。</p>
 
+<p class="tip" style="font-weight:500;color:var(--tp);margin-top:8px">2.1 Label 可下拉（Label下拉=true）</p>
 <div class="row">
-  <span class="label">组合:</span>
   <div class="fb">
-    <div class="fi"><span class="fi-label">渠道</span></div>
-    <div class="fi"><span class="fi-label">关键词</span></div>
-    <div class="fi"><span class="fi-label">日期范围</span></div>
+    <!-- FilterItem: label + select control -->
+    <div class="fi">
+      <span class="fi-label drop" onclick="this.classList.toggle('open')"><span class="fi-label-text">
+        Label
+        </span><span class="fi-label-arrow"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 4L5 6.5L7.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+      </span>
+      <span class="fi-control" tabindex="0" onclick="toggleControl(this)">
+        <span class="fi-control-text ph">Please select</span>
+        <span class="fi-control-arrow"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 4L5 6.5L7.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="fi-dropdown">
+          <div class="fi-opt" onclick="selectOpt(this,'App Store')">App Store</div>
+          <div class="fi-opt sel" onclick="selectOpt(this,'微信')">微信</div>
+          <div class="fi-opt" onclick="selectOpt(this,'微博')">微博</div>
+        </span>
+      </span>
+    </div>
   </div>
 </div>
 
+<p class="tip" style="font-weight:500;color:var(--tp);margin-top:12px">2.2 Label 不下拉（Label下拉=false）</p>
 <div class="row">
-  <span class="label">独立:</span>
-  <div class="fi" style="border-radius:4px;border:1px solid var(--bd)"><span class="fi-label">独立项</span></div>
+  <div class="fb">
+    <div class="fi">
+      <span class="fi-label"><span class="fi-label-text">渠道</span></span>
+      <span class="fi-control" tabindex="0" onclick="toggleControl(this)">
+        <span class="fi-control-text ph">Please select</span>
+        <span class="fi-control-arrow"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 4L5 6.5L7.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="fi-dropdown">
+          <div class="fi-opt" onclick="selectOpt(this,'App Store')">App Store</div>
+          <div class="fi-opt" onclick="selectOpt(this,'微信')">微信</div>
+          <div class="fi-opt" onclick="selectOpt(this,'微博')">微博</div>
+        </span>
+      </span>
+    </div>
+  </div>
 </div>
 
+<p class="tip" style="font-weight:500;color:var(--tp);margin-top:12px">2.3 多个 FilterItem 组合 — 边框合并</p>
 <div class="row">
-  <span class="label">带Label:</span>
-  <div class="fi"><span class="fi-label">Label</span></div>
+  <div style="display:flex;align-items:center;gap:12px">
+    <span style="font-size:12px;color:var(--tph)">看边框:</span>
+    <div class="fb">
+      <!-- 第一个: label左侧圆角 + border上/下/左, control右侧圆角 -->
+      <div class="fi">
+        <span class="fi-label"><span class="fi-label-text">渠道</span></span>
+        <span class="fi-control" tabindex="0" onclick="toggleControl(this)">
+          <span class="fi-control-text ph">Please select</span>
+          <span class="fi-control-arrow"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 4L5 6.5L7.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        </span>
+      </div>
+      <!-- 中间: 无圆角, label无左边框(被前一个control的右边框替代) -->
+      <div class="fi">
+        <span class="fi-label"><span class="fi-label-text">关键词</span></span>
+        <span class="fi-control">
+          <span class="fi-input-wrap"><input type="text" placeholder="请输入" style="width:90px"></span>
+        </span>
+      </div>
+      <!-- 最后一个: control右侧圆角, 四边都有border -->
+      <div class="fi">
+        <span class="fi-label"><span class="fi-label-text">日期</span></span>
+        <span class="fi-control" tabindex="0">
+          <span class="fi-dp">
+            <span style="color:var(--tph)">开始日期</span>
+            <span class="fi-dp-sep">-</span>
+            <span style="color:var(--tph)">结束日期</span>
+            <span class="fi-dp-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1.5" y="2.5" width="11" height="10" rx="1.5" stroke="currentColor" stroke-width="1"/><path d="M1 5.5H13" stroke="currentColor" stroke-width="1"/><path d="M4 1V3.5M10 1V3.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></span>
+          </span>
+        </span>
+      </div>
+      <!-- 末尾: control有右边框+右侧圆角 -->
+      <div class="fi">
+        <span class="fi-label"><span class="fi-label-text">标签</span></span>
+        <span class="fi-control">
+          <span class="fi-tag-wrap">
+            <span class="fi-tag">体验<span class="fi-tag-close" onclick="this.parentElement.remove()">&times;</span></span>
+            <input type="text" placeholder="添加" style="width:50px">
+          </span>
+        </span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<p class="tip" style="font-weight:500;color:var(--tp);margin-top:12px">2.4 已选中态（hover 测试 — 仅右侧 control 变色）</p>
+<div class="row">
+  <div class="fb">
+    <div class="fi">
+      <span class="fi-label"><span class="fi-label-text">渠道</span></span>
+      <span class="fi-control" tabindex="0" onclick="toggleControl(this)">
+        <span class="fi-control-text">微信</span>
+        <span class="fi-control-arrow"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 4L5 6.5L7.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="fi-dropdown">
+          <div class="fi-opt" onclick="selectOpt(this,'App Store')">App Store</div>
+          <div class="fi-opt sel" onclick="selectOpt(this,'微信')">微信</div>
+          <div class="fi-opt" onclick="selectOpt(this,'微博')">微博</div>
+        </span>
+      </span>
+    </div>
+    <div class="fi">
+      <span class="fi-label"><span class="fi-label-text">关键词</span></span>
+      <span class="fi-control">
+        <span class="fi-input-wrap"><input type="text" placeholder="请输入" value="用户体验" style="width:90px" oninput="var c=this.closest('.fi-control');c.classList.toggle('has-val',this.value.length>0)"></span>
+        <span class="fi-input-clear" onclick="var i=this.parentElement.querySelector('input');i.value='';i.dispatchEvent(new Event('input'))">&times;</span>
+      </span>
+    </div>
+  </div>
 </div>
 </div>
 
-<!-- ====== Section 3: Select ====== -->
-<div class="section">
-<h2>3. Select 选择器 <small style="font-weight:400;color:var(--tph)">node-id=3046-55643</small></h2>
-
+<!-- ============================================================
+     Section 3: Select 独立使用
+     ============================================================ -->
+<div class="sec">
+<h2>3. Select 选择器（独立使用）<small style="font-weight:400;color:var(--tph)">node-id=3046-55643</small></h2>
 <div class="row">
-  <span class="label">默认:</span>
-  <div class="sel" tabindex="0" onclick="this.classList.toggle('open')">
+  <span class="lbl">默认:</span>
+  <div class="sel" tabindex="0" onclick="toggleSel(this)">
     <span class="sel-text ph">Please select</span>
     <span class="sel-arrow"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 4L5 6.5L7.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-    <div class="sel-dropdown">
-      <div class="sel-opt">App Store</div>
-      <div class="sel-opt active">微信</div>
-      <div class="sel-opt">微博</div>
-      <div class="sel-opt">抖音</div>
+    <div class="sel-drop">
+      <div class="sel-opt" onclick="selectSelOpt(this,'App Store')">App Store</div>
+      <div class="sel-opt sel" onclick="selectSelOpt(this,'微信')">微信</div>
+      <div class="sel-opt" onclick="selectSelOpt(this,'微博')">微博</div>
     </div>
   </div>
-
-  <span class="label" style="margin-left:16px">已选:</span>
-  <div class="sel" tabindex="0" onclick="this.classList.toggle('open')">
-    <span class="sel-text">微信</span>
-    <span class="sel-arrow"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 4L5 6.5L7.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-    <div class="sel-dropdown">
-      <div class="sel-opt">App Store</div>
-      <div class="sel-opt active">微信</div>
-      <div class="sel-opt">微博</div>
-    </div>
-  </div>
-</div>
-
-<div class="row">
-  <span class="label">尺寸:</span>
+  <span class="lbl" style="margin-left:16px">尺寸:</span>
   <div class="sel lg"><span class="sel-text ph">大 36px</span><span class="sel-arrow"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 4L5 6.5L7.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
   <div class="sel"><span class="sel-text ph">中 32px</span><span class="sel-arrow"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 4L5 6.5L7.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
   <div class="sel sm"><span class="sel-text ph">小 28px</span><span class="sel-arrow"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 4L5 6.5L7.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
   <div class="sel xs"><span class="sel-text ph">迷你 24px</span><span class="sel-arrow"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 4L5 6.5L7.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
 </div>
-
 <div class="row">
-  <span class="label">填充:</span>
-  <div class="sel filled"><span class="sel-text ph">填充模式</span><span class="sel-arrow"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 4L5 6.5L7.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
-  <span class="label" style="margin-left:16px">禁用:</span>
+  <span class="lbl">禁用:</span>
   <div class="sel disabled"><span class="sel-text ph">Disabled</span><span class="sel-arrow"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 4L5 6.5L7.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
 </div>
-
 </div>
 
-<!-- ====== Section 4: Input ====== -->
-<div class="section">
-<h2>4. Input 输入框 <small style="font-weight:400;color:var(--tph)">node-id=3030-54078</small></h2>
-
+<!-- ============================================================
+     Section 4: Input
+     ============================================================ -->
+<div class="sec">
+<h2>4. Input 输入框（独立使用）<small style="font-weight:400;color:var(--tph)">node-id=3030-54078</small></h2>
 <div class="row">
-  <span class="label">默认:</span>
-  <div class="inp-wrap">
-    <input type="text" placeholder="请输入关键词" oninput="this.parentElement.classList.toggle('has-value',this.value.length>0)">
-    <span class="inp-clear" onclick="var i=this.parentElement.querySelector('input');i.value='';i.dispatchEvent(new Event('input'))">&times;</span>
-  </div>
-</div>
-
-<div class="row">
-  <span class="label">前缀图标:</span>
-  <div class="inp-wrap">
+  <span class="lbl">默认:</span>
+  <div class="inp">
     <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="flex-shrink:0;color:var(--tph)"><circle cx="6" cy="6" r="4.5" stroke="currentColor" stroke-width="1.5"/><path d="M9.5 9.5L13 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
-    <input type="text" placeholder="搜索..." oninput="this.parentElement.classList.toggle('has-value',this.value.length>0)">
-    <span class="inp-clear" onclick="var i=this.parentElement.querySelector('input');i.value='';i.dispatchEvent(new Event('input'))">&times;</span>
+    <input type="text" placeholder="请输入关键词" oninput="this.parentElement.classList.toggle('has-val',this.value.length>0)">
+    <span class="inp clr" onclick="var i=this.parentElement.querySelector('input');i.value='';i.dispatchEvent(new Event('input'))">&times;</span>
   </div>
 </div>
-
 <div class="row">
-  <span class="label">前置标签:</span>
-  <div style="display:inline-flex;align-items:center">
-    <span style="display:inline-flex;align-items:center;height:32px;padding:0 16px;background:#fff;border:1px solid var(--bd);border-right:0;border-radius:4px 0 0 4px;font-size:14px;color:var(--tp)">http://</span>
-    <div class="inp-wrap" style="border-radius:0 4px 4px 0">
-      <input type="text" placeholder="example.com">
-    </div>
-  </div>
+  <span class="lbl">尺寸:</span>
+  <div class="inp lg"><input type="text" placeholder="大 36px"></div>
+  <div class="inp"><input type="text" placeholder="中 32px"></div>
+  <div class="inp sm"><input type="text" placeholder="小 28px"></div>
+  <div class="inp xs"><input type="text" placeholder="迷你 24px"></div>
 </div>
-
 <div class="row">
-  <span class="label">尺寸:</span>
-  <div class="inp-wrap lg"><input type="text" placeholder="大 36px"></div>
-  <div class="inp-wrap"><input type="text" placeholder="中 32px"></div>
-  <div class="inp-wrap sm"><input type="text" placeholder="小 28px"></div>
-  <div class="inp-wrap xs"><input type="text" placeholder="迷你 24px"></div>
-</div>
-
-<div class="row">
-  <span class="label">填充:</span>
-  <div class="inp-wrap filled"><input type="text" placeholder="填充模式"></div>
-  <span class="label" style="margin-left:16px">禁用:</span>
-  <div class="inp-wrap disabled"><input type="text" placeholder="Disabled" disabled></div>
+  <span class="lbl">禁用:</span>
+  <div class="inp disabled"><input type="text" placeholder="Disabled" disabled></div>
 </div>
 </div>
 
-<!-- ====== Section 5: DatePicker ====== -->
-<div class="section">
-<h2>5. DatePicker 日期选择器 <small style="font-weight:400;color:var(--tph)">node-id=187-4087</small></h2>
-
+<!-- ============================================================
+     Section 5: DatePicker
+     ============================================================ -->
+<div class="sec">
+<h2>5. DatePicker 日期选择器（独立使用）<small style="font-weight:400;color:var(--tph)">node-id=187-4087</small></h2>
 <div class="row">
-  <span class="label">范围:</span>
+  <span class="lbl">范围:</span>
   <div class="dp" tabindex="0">
-    <span class="ph" style="color:var(--tph)">开始日期</span>
+    <span style="color:var(--tph)">开始日期</span>
     <span class="dp-sep">-</span>
-    <span class="ph" style="color:var(--tph)">结束日期</span>
+    <span style="color:var(--tph)">结束日期</span>
     <span class="dp-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1.5" y="2.5" width="11" height="10" rx="1.5" stroke="currentColor" stroke-width="1"/><path d="M1 5.5H13" stroke="currentColor" stroke-width="1"/><path d="M4 1V3.5M10 1V3.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></span>
   </div>
-
-  <span class="label" style="margin-left:16px">单日:</span>
+  <span class="lbl" style="margin-left:16px">单日:</span>
   <div class="dp" tabindex="0">
-    <span class="ph" style="color:var(--tph)">选择日期</span>
+    <span style="color:var(--tph)">选择日期</span>
     <span class="dp-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1.5" y="2.5" width="11" height="10" rx="1.5" stroke="currentColor" stroke-width="1"/><path d="M1 5.5H13" stroke="currentColor" stroke-width="1"/><path d="M4 1V3.5M10 1V3.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></span>
   </div>
 </div>
-
 <div class="row">
-  <span class="label">填充:</span>
-  <div class="dp filled" tabindex="0">
-    <span class="ph" style="color:var(--tph)">开始日期</span><span class="dp-sep">-</span><span class="ph" style="color:var(--tph)">结束日期</span>
-    <span class="dp-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1.5" y="2.5" width="11" height="10" rx="1.5" stroke="currentColor" stroke-width="1"/><path d="M1 5.5H13" stroke="currentColor" stroke-width="1"/><path d="M4 1V3.5M10 1V3.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></span>
-  </div>
-  <span class="label" style="margin-left:16px">禁用:</span>
-  <div class="dp disabled" tabindex="0">
-    <span style="color:var(--tph)">2026-01-01</span>
-    <span class="dp-sep">-</span>
-    <span style="color:var(--tph)">2026-06-30</span>
+  <span class="lbl">禁用:</span>
+  <div class="dp disabled">
+    <span>2026-01-01</span><span class="dp-sep">-</span><span>2026-06-30</span>
     <span class="dp-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1.5" y="2.5" width="11" height="10" rx="1.5" stroke="currentColor" stroke-width="1"/><path d="M1 5.5H13" stroke="currentColor" stroke-width="1"/><path d="M4 1V3.5M10 1V3.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></span>
   </div>
 </div>
 </div>
 
-<!-- ====== Section 6: InputTag ====== -->
-<div class="section">
-<h2>6. InputTag 标签输入框 <small style="font-weight:400;color:var(--tph)">node-id=3030-54079</small></h2>
-
-<div class="row" style="align-items:flex-start">
-  <span class="label" style="margin-top:8px">默认:</span>
-  <div class="it" style="width:300px">
-    <span class="tag">用户体验<span class="tag-close" onclick="this.parentElement.remove()">&times;</span></span>
-    <span class="tag">界面设计<span class="tag-close" onclick="this.parentElement.remove()">&times;</span></span>
-    <input type="text" placeholder="输入标签后按回车" onkeydown="if(this.value&&event.key==='Enter'){var t=document.createElement('span');t.className='tag';t.innerHTML=this.value+'<span class=tag-close onclick=this.parentElement.remove()>&times;</span>';this.before(t);this.value=''}">
-  </div>
-</div>
-
+<!-- ============================================================
+     Section 6: InputTag
+     ============================================================ -->
+<div class="sec">
+<h2>6. InputTag 标签输入框（独立使用）<small style="font-weight:400;color:var(--tph)">node-id=3030-54079</small></h2>
 <div class="row">
-  <span class="label">空态:</span>
-  <div class="it" style="width:300px">
-    <input type="text" placeholder="Please input">
+  <span class="lbl">默认:</span>
+  <div class="it" style="width:320px">
+    <span class="fi-tag">用户体验<span class="fi-tag-close" onclick="this.parentElement.remove()">&times;</span></span>
+    <span class="fi-tag">界面设计<span class="fi-tag-close" onclick="this.parentElement.remove()">&times;</span></span>
+    <input type="text" placeholder="输入标签后按回车" onkeydown="if(this.value&&event.key==='Enter'){var t=document.createElement('span');t.className='fi-tag';t.innerHTML=this.value+'<span class=fi-tag-close onclick=this.parentElement.remove()>&times;</span>';this.before(t);this.value=''}">
   </div>
 </div>
-
 <div class="row">
-  <span class="label">禁用:</span>
-  <div class="it disabled" style="width:300px">
-    <span class="tag">标签1<span class="tag-close">&times;</span></span>
-    <span class="tag">标签2<span class="tag-close">&times;</span></span>
-    <input type="text" placeholder="" disabled>
-  </div>
+  <span class="lbl">空态:</span>
+  <div class="it" style="width:280px"><input type="text" placeholder="Please input"></div>
+  <span class="lbl" style="margin-left:16px">禁用:</span>
+  <div class="it disabled" style="width:200px"><span class="fi-tag">标签1<span class="fi-tag-close">&times;</span></span><input type="text" disabled></div>
 </div>
 </div>
 
-<!-- ====== Section 7: Combined Example ====== -->
-<div class="section">
-<h2>7. 组合示例 — 完整筛选栏</h2>
-<p style="font-size:14px;color:var(--tph);margin-bottom:16px">对应 Figma 中 filter-item (3320-11160) 的四种类型组合</p>
-
+<!-- ============================================================
+     Section 7: Complete Filter Bar
+     ============================================================ -->
+<div class="sec">
+<h2>7. 完整筛选栏 — 对照 Figma 布局</h2>
+<p class="tip">DropdownTrigger + FilterItem × 4（选择器、输入框、日期选择器、标签输入框）</p>
 <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap">
-  <!-- Dropdown Trigger -->
-  <div class="dd primary">
+  <!-- Dropdown -->
+  <div class="dd pri" onclick="this.querySelector('.dd-icon').classList.toggle('open')">
     <span class="dd-text">渠道</span>
     <span class="dd-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3.5 5.5L7 9L10.5 5.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
   </div>
 
-  <!-- Filter Items -->
+  <!-- FilterBar -->
   <div class="fb">
     <div class="fi">
-      <span class="fi-label">渠道</span>
-      <div class="sel" style="border:none;padding:0;min-width:0;height:auto;box-shadow:none" tabindex="0">
-        <span class="sel-text ph">Please select</span>
-        <span class="sel-arrow"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 4L5 6.5L7.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
-      </div>
+      <span class="fi-label"><span class="fi-label-text">渠道</span></span>
+      <span class="fi-control" tabindex="0" onclick="toggleControl(this)">
+        <span class="fi-control-text ph">Please select</span>
+        <span class="fi-control-arrow"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 4L5 6.5L7.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <span class="fi-dropdown">
+          <div class="fi-opt" onclick="selectOpt(this,'App Store')">App Store</div>
+          <div class="fi-opt" onclick="selectOpt(this,'微信')">微信</div>
+          <div class="fi-opt" onclick="selectOpt(this,'微博')">微博</div>
+        </span>
+      </span>
     </div>
     <div class="fi">
-      <span class="fi-label">关键词</span>
-      <div class="inp-wrap" style="border:none;padding:0;height:auto;box-shadow:none;min-width:0">
-        <input type="text" placeholder="请输入" style="width:100px">
-      </div>
+      <span class="fi-label"><span class="fi-label-text">关键词</span></span>
+      <span class="fi-control">
+        <span class="fi-input-wrap"><input type="text" placeholder="请输入" style="width:90px"></span>
+      </span>
     </div>
     <div class="fi">
-      <span class="fi-label">日期</span>
-      <span style="color:var(--tph);font-size:14px">开始日期</span>
-      <span class="dp-sep">-</span>
-      <span style="color:var(--tph);font-size:14px">结束日期</span>
-      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style="color:var(--tph)"><rect x="1.5" y="2.5" width="11" height="10" rx="1.5" stroke="currentColor" stroke-width="1"/><path d="M1 5.5H13" stroke="currentColor" stroke-width="1"/><path d="M4 1V3.5M10 1V3.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg>
+      <span class="fi-label"><span class="fi-label-text">日期</span></span>
+      <span class="fi-control" tabindex="0">
+        <span class="fi-dp">
+          <span style="color:var(--tph)">开始日期</span>
+          <span class="fi-dp-sep">-</span>
+          <span style="color:var(--tph)">结束日期</span>
+          <span class="fi-dp-icon"><svg width="14" height="14" viewBox="0 0 14 14" fill="none"><rect x="1.5" y="2.5" width="11" height="10" rx="1.5" stroke="currentColor" stroke-width="1"/><path d="M1 5.5H13" stroke="currentColor" stroke-width="1"/><path d="M4 1V3.5M10 1V3.5" stroke="currentColor" stroke-width="1" stroke-linecap="round"/></svg></span>
+        </span>
+      </span>
     </div>
-  </div>
-
-  <!-- InputTag -->
-  <div class="it">
-    <span class="tag">标签<span class="tag-close">&times;</span></span>
-    <input type="text" placeholder="添加标签" style="width:80px">
+    <div class="fi">
+      <span class="fi-label"><span class="fi-label-text">标签</span></span>
+      <span class="fi-control">
+        <span class="fi-tag-wrap">
+          <span class="fi-tag">标签<span class="fi-tag-close" onclick="this.parentElement.remove()">&times;</span></span>
+          <input type="text" placeholder="添加" style="width:50px">
+        </span>
+      </span>
+    </div>
   </div>
 </div>
 </div>
 
-<!-- ====== Section 8: Design Tokens ====== -->
-<div class="section">
-<h2>8. 设计令牌 Design Tokens</h2>
-<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;font-size:13px">
+<!-- ============================================================
+     Section 8: Design Tokens
+     ============================================================ -->
+<div class="sec">
+<h2>8. 设计令牌</h2>
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;font-size:13px">
   <div style="padding:12px;background:var(--p);color:#fff;border-radius:4px"><strong>Primary</strong><br>#00AAA6</div>
   <div style="padding:12px;background:var(--ph);color:#fff;border-radius:4px"><strong>Hover</strong><br>#008C89</div>
+  <div style="padding:12px;background:var(--pl);color:#fff;border-radius:4px"><strong>Light</strong><br>#22BBB3</div>
   <div style="padding:12px;background:var(--tp);color:#fff;border-radius:4px"><strong>Text</strong><br>#1D2129</div>
   <div style="padding:12px;background:var(--tph);color:#fff;border-radius:4px"><strong>Placeholder</strong><br>#86909C</div>
   <div style="padding:12px;background:var(--bd);color:var(--tp);border-radius:4px"><strong>Border</strong><br>#E5E6EB</div>
   <div style="padding:12px;background:var(--bdh);color:#fff;border-radius:4px"><strong>Border Hover</strong><br>#C9CDD4</div>
-  <div style="padding:12px;background:var(--bgf);color:var(--tp);border-radius:4px"><strong>Filled BG</strong><br>#F7F8FA</div>
   <div style="padding:12px;background:var(--fr);color:#fff;border-radius:4px"><strong>Focus Ring</strong><br>#6B60EC</div>
 </div>
 </div>
+
+<script>
+// === 箭头行为: 点击展开旋转180°, 选完旋转回去 ===
+function toggleControl(el) {
+  var wasActive = el.classList.contains('active');
+  // 关闭所有其他展开的
+  document.querySelectorAll('.fi-control.active').forEach(function(c) { c.classList.remove('active'); });
+  if (!wasActive) el.classList.add('active');
+}
+
+function selectOpt(opt, value) {
+  var control = opt.closest('.fi-control');
+  var text = control.querySelector('.fi-control-text');
+  text.textContent = value;
+  text.classList.remove('ph');
+  // 更新 active 态
+  control.querySelectorAll('.fi-opt').forEach(function(o) { o.classList.remove('sel'); });
+  opt.classList.add('sel');
+  // 选完关闭下拉 → 箭头旋转回去
+  control.classList.remove('active');
+  event.stopPropagation();
+}
+
+// === Select 独立组件同样的行为 ===
+function toggleSel(el) {
+  var wasActive = el.classList.contains('active');
+  document.querySelectorAll('.sel.active').forEach(function(s) { s.classList.remove('active'); });
+  if (!wasActive) el.classList.add('active');
+}
+
+function selectSelOpt(opt, value) {
+  var sel = opt.closest('.sel');
+  var text = sel.querySelector('.sel-text');
+  text.textContent = value;
+  text.classList.remove('ph');
+  sel.querySelectorAll('.sel-opt').forEach(function(o) { o.classList.remove('sel'); });
+  opt.classList.add('sel');
+  // 选完关闭 → 箭头旋转回去
+  sel.classList.remove('active');
+  event.stopPropagation();
+}
+
+// 点击外部关闭所有下拉
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.fi-control') && !e.target.closest('.sel')) {
+    document.querySelectorAll('.fi-control.active, .sel.active').forEach(function(el) {
+      el.classList.remove('active');
+    });
+  }
+});
+</script>
 
 </body>
 </html>
