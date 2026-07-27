@@ -104,17 +104,26 @@ h2{font-size:16px;font-weight:500;margin:32px 0 12px}
 }
 .fi-control.active .fi-control-arrow{transform:rotate(180deg)}
 
-/* control 下拉面板 */
+/* control 下拉面板 — 对应 Figma dropdown-menu */
 .fi-dropdown{
   position:absolute;top:calc(100% + 4px);left:0;min-width:100%;
-  background:var(--bgw);border:1px solid var(--bd);border-radius:var(--r-md);
-  box-shadow:0 4px 12px rgba(0,0,0,.1);z-index:100;
-  display:none;max-height:200px;overflow-y:auto;
+  background:var(--bgw);border-radius:var(--r-md);z-index:100;
+  display:none;overflow:hidden;
+  box-shadow:0px 4px 10px 0px rgba(0,0,0,0.1);
+  border:1px solid var(--bd);
 }
 .fi-control.active .fi-dropdown{display:block}
-.fi-opt{padding:6px 12px;font-size:14px;cursor:pointer;transition:background .15s;white-space:nowrap}
+.fi-dropdown-inner{padding:4px 6px}
+.fi-opt{
+  display:flex;align-items:center;padding:7px 12px;gap:8px;
+  font-size:14px;line-height:22px;cursor:pointer;
+  border-radius:var(--r-md);color:var(--tp);
+  font-family:var(--font);font-weight:400;
+  transition:background .15s;white-space:nowrap;
+}
 .fi-opt:hover{background:var(--bgf)}
-.fi-opt.sel{color:var(--p);background:#E5F6F6}
+/* 选中态: bg #f2f3f5, text #00aaa6 */
+.fi-opt.sel{color:var(--p);background:#f2f3f5}
 
 /* 禁用态 */
 .fi.disabled .fi-control,.fi.disabled .fi-label{opacity:.3;pointer-events:none}
@@ -156,11 +165,24 @@ h2{font-size:16px;font-weight:500;margin:32px 0 12px}
 .sel-text.ph{color:var(--tph)}
 .sel-arrow{display:inline-flex;flex-shrink:0;transition:transform .2s}
 .sel.active .sel-arrow{transform:rotate(180deg)}
-.sel-drop{position:absolute;top:calc(100% + 4px);left:0;right:0;background:var(--bgw);border:1px solid var(--bd);border-radius:var(--r-md);box-shadow:0 4px 12px rgba(0,0,0,.1);z-index:100;display:none;max-height:200px;overflow-y:auto}
+.sel-drop{
+  position:absolute;top:calc(100% + 4px);left:0;right:0;
+  background:var(--bgw);border-radius:var(--r-md);z-index:100;
+  display:none;overflow:hidden;
+  box-shadow:0px 4px 10px 0px rgba(0,0,0,0.1);
+  border:1px solid var(--bd);
+}
 .sel.active .sel-drop{display:block}
-.sel-opt{padding:6px 12px;font-size:14px;cursor:pointer;transition:background .15s}
+.sel-drop-inner{padding:4px 6px}
+.sel-opt{
+  display:flex;align-items:center;padding:7px 12px;gap:8px;
+  font-size:14px;line-height:22px;cursor:pointer;
+  border-radius:var(--r-md);color:var(--tp);
+  font-family:var(--font);font-weight:400;
+  transition:background .15s;
+}
 .sel-opt:hover{background:var(--bgf)}
-.sel-opt.sel{color:var(--p);background:#E5F6F6}
+.sel-opt.sel{color:var(--p);background:#f2f3f5}
 .sel.disabled{opacity:.3;pointer-events:none}
 
 /* ============================================================
@@ -246,10 +268,11 @@ svg.ico{display:inline-flex;flex-shrink:0}
         <span class="fi-control-text ph">Please select</span>
         <span class="fi-control-arrow"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 4L5 6.5L7.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         <span class="fi-dropdown">
-          <div class="fi-opt" onclick="selectOpt(this,'App Store')">App Store</div>
+            <div class="fi-dropdown-inner"><div class="fi-opt" onclick="selectOpt(this,'App Store')">App Store</div>
           <div class="fi-opt sel" onclick="selectOpt(this,'微信')">微信</div>
           <div class="fi-opt" onclick="selectOpt(this,'微博')">微博</div>
-        </span>
+            </div>
+          </span>
       </span>
     </div>
   </div>
@@ -264,10 +287,11 @@ svg.ico{display:inline-flex;flex-shrink:0}
         <span class="fi-control-text ph">Please select</span>
         <span class="fi-control-arrow"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 4L5 6.5L7.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         <span class="fi-dropdown">
-          <div class="fi-opt" onclick="selectOpt(this,'App Store')">App Store</div>
+            <div class="fi-dropdown-inner"><div class="fi-opt" onclick="selectOpt(this,'App Store')">App Store</div>
           <div class="fi-opt" onclick="selectOpt(this,'微信')">微信</div>
           <div class="fi-opt" onclick="selectOpt(this,'微博')">微博</div>
-        </span>
+            </div>
+          </span>
       </span>
     </div>
   </div>
@@ -328,10 +352,11 @@ svg.ico{display:inline-flex;flex-shrink:0}
         <span class="fi-control-text">微信</span>
         <span class="fi-control-arrow"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 4L5 6.5L7.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         <span class="fi-dropdown">
-          <div class="fi-opt" onclick="selectOpt(this,'App Store')">App Store</div>
+            <div class="fi-dropdown-inner"><div class="fi-opt" onclick="selectOpt(this,'App Store')">App Store</div>
           <div class="fi-opt sel" onclick="selectOpt(this,'微信')">微信</div>
           <div class="fi-opt" onclick="selectOpt(this,'微博')">微博</div>
-        </span>
+            </div>
+          </span>
       </span>
     </div>
     <div class="fi">
@@ -356,7 +381,9 @@ svg.ico{display:inline-flex;flex-shrink:0}
     <span class="sel-text ph">Please select</span>
     <span class="sel-arrow"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 4L5 6.5L7.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
     <div class="sel-drop">
-      <div class="sel-opt" onclick="selectSelOpt(this,'App Store')">App Store</div>
+              <div class="sel-drop-inner"><div class="sel-opt" onclick="selectSelOpt(this,'App Store')">App Store
+              </div>
+            </div>
       <div class="sel-opt sel" onclick="selectSelOpt(this,'微信')">微信</div>
       <div class="sel-opt" onclick="selectSelOpt(this,'微博')">微博</div>
     </div>
@@ -469,10 +496,11 @@ svg.ico{display:inline-flex;flex-shrink:0}
         <span class="fi-control-text ph">Please select</span>
         <span class="fi-control-arrow"><svg width="10" height="10" viewBox="0 0 10 10" fill="none"><path d="M2.5 4L5 6.5L7.5 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
         <span class="fi-dropdown">
-          <div class="fi-opt" onclick="selectOpt(this,'App Store')">App Store</div>
+            <div class="fi-dropdown-inner"><div class="fi-opt" onclick="selectOpt(this,'App Store')">App Store</div>
           <div class="fi-opt" onclick="selectOpt(this,'微信')">微信</div>
           <div class="fi-opt" onclick="selectOpt(this,'微博')">微博</div>
-        </span>
+            </div>
+          </span>
       </span>
     </div>
     <div class="fi">
